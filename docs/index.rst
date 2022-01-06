@@ -351,3 +351,10 @@ ELKは起動に時間がかかります。以下のコマンドを実行し想�
    docker-compose -f docker-compose.yaml up -d
 
 ブラウザからELKを開き、Menu > Kibana > Dashboardで正しく3つのDashboardが見えることを確認する
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Lab Contents:
+   :glob:
+
+   class*/module*/module*
