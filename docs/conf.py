@@ -8,7 +8,7 @@
 classname = "F5 Networks Japan Technical Information"
 
 # OPTIONAL: The URL to the GitHub Repository for this class
-github_url = "https://github.com/BeF5/f5j-nginx-plus-lab1"
+github_url = "https://github.com/BeF5/f5j-nginx-plus-lab2-security"
 
 git_branch_name = 'master'
 
@@ -92,7 +92,7 @@ source_suffix = ['.rst', '.md']
 master_doc = 'index'
 
 # General information about the project.
-project = u'NGINX Plus Lab (Back To Basic)'
+project = u'NGINX Plus Lab2 (Security)'
 copyright = u'F5ネットワークスジャパン合同会社'
 author = u'F5ネットワークスジャパン合同会社'
 
