@@ -244,29 +244,30 @@ logstashを起動
    ※出力結果サンプル
    logstash is running
 
-
-ELKは起動に時間がかかります。以下のコマンドを実行し想定した結果となることを確認します。
-
 .. NOTE::
 
-   $ docker exec -it  $(docker ps -a -f name=f5-waf-elk-dashboards_elasticsearch_1  -q) ps -aef
-   UID        PID  PPID  C STIME TTY          TIME CMD
-   root         1     0  0 01:48 ?        00:00:00 /bin/bash /usr/local/bin/start.s
-   root        13     1  0 01:48 ?        00:00:00 /usr/sbin/cron
-   elastic+   191     1  1 01:48 ?        00:01:48 /opt/elasticsearch/jdk/bin/java
-   elastic+   215   191  0 01:48 ?        00:00:00 /opt/elasticsearch/modules/x-pac
-   logstash   305     1  2 01:48 ?        00:02:13 /usr/bin/java -Xms1g -Xmx1g -XX:
-   kibana     327     1  1 01:48 ?        00:01:21 /opt/kibana/bin/../node/bin/node
-   root       330     1  0 01:48 ?        00:00:00 tail -f /var/log/elasticsearch/e
-   root       518     0  0 03:37 pts/0    00:00:00 ps -aef
+   ELKは起動に時間がかかります。以下のコマンドを実行し想定した結果となることを確認します。
 
-   $ docker logs  $(docker ps -a -f name=f5-waf-elk-dashboards_elasticsearch_1  -q)| grep running
-   [2022-01-06T01:48:49,755][INFO ][logstash.agent           ] Pipelines running {:count=>2, :running_pipelines=>[:napdos, :napwaf], :non_running_pipelines=>[]}
-   {"type":"log","@timestamp":"2022-01-06T01:49:06Z","tags":["info","http","server","Kibana"],"pid":327,"message":"http server running at http://0.0.0.0:5601"}
-   {"type":"log","@timestamp":"2022-01-06T01:49:05Z","tags":["listening","info"],"pid":327,"message":"Server running at http://0.0.0.0:5601"}
+   ::
+      
+      $ docker exec -it  $(docker ps -a -f name=f5-waf-elk-dashboards_elasticsearch_1  -q) ps -aef
+      UID        PID  PPID  C STIME TTY          TIME CMD
+      root         1     0  0 01:48 ?        00:00:00 /bin/bash /usr/local/bin/start.s
+      root        13     1  0 01:48 ?        00:00:00 /usr/sbin/cron
+      elastic+   191     1  1 01:48 ?        00:01:48 /opt/elasticsearch/jdk/bin/java
+      elastic+   215   191  0 01:48 ?        00:00:00 /opt/elasticsearch/modules/x-pac
+      logstash   305     1  2 01:48 ?        00:02:13 /usr/bin/java -Xms1g -Xmx1g -XX:
+      kibana     327     1  1 01:48 ?        00:01:21 /opt/kibana/bin/../node/bin/node
+      root       330     1  0 01:48 ?        00:00:00 tail -f /var/log/elasticsearch/e
+      root       518     0  0 03:37 pts/0    00:00:00 ps -aef
 
-   一定時間経過して状況が改善しない場合、再度docker-composeを実行してください
-   docker-compose -f docker-compose.yaml down
-   docker-compose -f docker-compose.yaml up -d
+      $ docker logs  $(docker ps -a -f name=f5-waf-elk-dashboards_elasticsearch_1  -q)| grep running
+      [2022-01-06T01:48:49,755][INFO ][logstash.agent           ] Pipelines running {:count=>2, :running_pipelines=>[:napdos, :napwaf], :non_running_pipelines=>[]}
+      {"type":"log","@timestamp":"2022-01-06T01:49:06Z","tags":["info","http","server","Kibana"],"pid":327,"message":"http server running at http://0.0.0.0:5601"}
+      {"type":"log","@timestamp":"2022-01-06T01:49:05Z","tags":["listening","info"],"pid":327,"message":"Server running at http://0.0.0.0:5601"}
+
+      一定時間経過して状況が改善しない場合、再度docker-composeを実行してください
+      docker-compose -f docker-compose.yaml down
+      docker-compose -f docker-compose.yaml up -d
 
 ブラウザからELKを開き、Menu > Kibana > Dashboardで正しく3つのDashboardが見えることを確認する
