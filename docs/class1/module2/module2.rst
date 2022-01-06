@@ -1,4 +1,4 @@
-2. lab
+2. LAB
 #######
 
 NGINX Plus のインストール

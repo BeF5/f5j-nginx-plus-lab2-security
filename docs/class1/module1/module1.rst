@@ -1,11 +1,11 @@
-1. はじめに
+1. LAB環境
 #######
 
 実施環境
 ========
 
 -  事前にラボ環境へのInviteを行っておりますので、メールをご確認ください
--  利用するコマンド： kubectl git , jq , sudo, curl
+-  利用するコマンド： git , jq , sudo, curl
 -  NGINX Trialライセンスの取得、ラボ実施ユーザのHome Directoryへ配置
 
 ラボ環境 (UDF(Unified Demonstration Framework)) コンポーネントへの接続
