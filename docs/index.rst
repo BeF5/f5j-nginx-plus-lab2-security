@@ -23,10 +23,7 @@ NGINX Plusの基本的な動作や仕様について紹介しております。
 -----
 以下の資料を参考にご覧いただけます。一部内容を変更してラボの内容としております
 
-
 `これから始めるNGINX技術解説～セキュリティ編 <https://www.slideshare.net/Nginx/nginx-back-to-basics-part-3-security-japanese-version>`__
-
-
 
 Webinar(プレゼンテーション・デモ)
 -----
