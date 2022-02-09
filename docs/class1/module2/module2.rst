@@ -1,7 +1,7 @@
 NGINX LAB
 #######
 
-NGINX Plus のインストール
+NGINX Plus のインストール test
 ====
 
 1. NGINX Plus、アドオンモジュールのインストール (15min)
