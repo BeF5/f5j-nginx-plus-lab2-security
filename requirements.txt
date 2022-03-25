@@ -1,6 +1,0 @@
-sphinx<2.0
-recommonmark
-sphinxjp.themes.basicstrap
-sphinxcontrib-googleanalytics
-cloud_sptheme
-jinja2<3.1.0.
