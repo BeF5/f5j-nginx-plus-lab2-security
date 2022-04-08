@@ -1,40 +1,6 @@
 NGINX LAB
 #######
 
-NGINX Plus のインストール test
-====
-
-1. NGINX Plus、アドオンモジュールのインストール (15min)
-----
-
-こちらの手順「 `NGINX Plusのインストール (15min) <https://f5j-nginx-plus-lab1.readthedocs.io/en/latest/class1/module2/module2.html#nginx-plus-15min>`__」を参考に、NGINX Plus、アドオンモジュールをインストールをインストールしてください
-
-手順の内容に加えて、必要となるモジュールをインストールしてください
-
-::
-
-   sudo apt-get install nginx-plus-module-njs
-
-
-インストールしたパッケージの情報を確認いただけます
-
-
-::
-
-   # dpkg-query -l | grep njs
-   
-   ii  nginx-plus-module-njs              25+0.7.0-1~focal                      amd64        NGINX Plus njs dynamic modules
-
-ラボの実施（作成中）
-====
-
-必要なパッケージの取得
-
-::
-
-   git clone https://github.com/hiropo20/back-to-basic_plus-security.git
-
-
 (参考) バックエンドのアプリケーション＆ELKのデプロイ手順
 ====
 
@@ -55,6 +21,8 @@ UDF環境では ``docker_host`` にログインし手順を実行します
 
 ::
 
+   # sudo su
+   cd ~/
    git clone https://github.com/f5devcentral/f5-waf-elk-dashboards.git
    git clone https://github.com/f5devcentral/nap-dos-elk-dashboards.git
 
@@ -96,7 +64,7 @@ NAP DoSで利用するLogstashの設定ファイルをNAP WAFのディレクト�
 
    cp f5-waf-elk-dashboards/docker-compose.yaml f5-waf-elk-dashboards/docker-compose.yaml-bak
    cat << EOF > f5-waf-elk-dashboards/docker-compose.yaml
-   version: "2.4"
+   version: "3.3"
    services:
      elasticsearch:
       image: sebp/elk:793
