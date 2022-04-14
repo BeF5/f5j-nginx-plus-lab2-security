@@ -144,10 +144,10 @@ NAP WAFでは、WAFののセキュリティポリシーをJSONファイルで指
 
 この通信の結果をELKで取得していることを確認します
 
-``ELK`` を開いてください
+LAB の構成全体の画面を開き、 ``ELK`` を開いてください
 
    .. image:: ./media/udf_docker_elk.jpg
-       :width: 400
+       :width: 200
 
 左上メニューを開き ``Discover`` をクリックしてください
 
@@ -155,7 +155,7 @@ NAP WAFでは、WAFののセキュリティポリシーをJSONファイルで指
        :width: 400
 
    .. image:: ./media/elk-menu2.jpg
-       :width: 400
+       :width: 200
 
 表示された画面の `+ Add filter` の下にすでに登録されている ``waf-logs-*`` を選択肢てください
 
