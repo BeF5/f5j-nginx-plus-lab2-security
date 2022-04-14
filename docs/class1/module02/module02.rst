@@ -11,7 +11,7 @@ NGINX Plus のインストール test
 
 手順の内容に加えて、必要となるモジュールをインストールしてください
 
-::
+.. code-block:: cmdin
 
    sudo apt-get install nginx-plus-module-njs
 
@@ -19,7 +19,7 @@ NGINX Plus のインストール test
 インストールしたパッケージの情報を確認いただけます
 
 
-::
+.. code-block:: cmdin
 
    # dpkg-query -l | grep njs
    
@@ -30,7 +30,7 @@ NGINX Plus のインストール test
 
 必要なパッケージの取得
 
-::
-
+.. code-block:: cmdin
+   
    git clone https://github.com/hiropo20/back-to-basic_plus-security.git
 
