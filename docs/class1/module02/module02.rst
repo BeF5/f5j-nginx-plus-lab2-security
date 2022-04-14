@@ -34,3 +34,16 @@ NGINX Plus のインストール test
    
    git clone https://github.com/hiropo20/back-to-basic_plus-security.git
 
+
+.. code-block:: cmdin
+ 
+  kubectl get pod
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+  NAME                       READY   STATUS    RESTARTS  AGE
+  coffee-7c86d7d67c-wjxss    1/1     Running   0         1m
+  coffee-7c86d7d67c-8jm9z    1/1     Running   0         1m
+  tea-5c457db9-dc4cs         1/1     Running   0         1m
