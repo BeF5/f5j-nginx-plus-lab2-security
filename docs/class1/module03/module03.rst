@@ -15,13 +15,13 @@ NAP WAFはNGINXの動的モジュールであるという特徴から、Gateway�
    .. image:: ./media/nap-waf-structure.jpg
        :width: 400
 
-NAP WAF
-====
-
-主要な設定について、一つずつ設定と動作確認を行います。
+以下項目では主要な設定について、それぞれの設定と動作を確認します。
 設定の詳細は、 `こちら <https://docs.nginx.com/nginx-app-protect/configuration-guide/configuration/>`__ の内容を参照してください。
 
-1. WAFの設定をデプロイ
+1. シンプルなWAFの設定
+====
+
+1. 設定
 ----
 
 WAFを設定します
@@ -127,7 +127,10 @@ NAP WAFでは、WAFののセキュリティポリシーをJSONファイルで指
   nginx -s reload
 
 
-まず初めにサンプルアプリケーションにアクセスすることを確認します。
+2. 動作確認
+----
+
+まず初めにサンプルアプリケーションにアクセスできることを確認します。
 
 バックエンドには ``OWASP Juice Shop`` というアプリケーションが動作しています。
 正しく接続できることを確認します
@@ -144,7 +147,7 @@ NAP WAFでは、WAFののセキュリティポリシーをJSONファイルで指
 
 この通信の結果をELKで取得していることを確認します
 
-LAB の構成全体の画面を開き、 ``ELK`` を開いてください
+ラボの 構成全体の画面を開き、 ``ELK`` を開いてください
 
    .. image:: ./media/udf_docker_elk.jpg
        :width: 200
@@ -177,7 +180,11 @@ LAB の構成全体の画面を開き、 ``ELK`` を開いてください
 通信は確認した通り許可されておりますが、Curlコマンドを利用した通信が到達していることが確認できます。
 
 
-2. 通信をブロック(enforcementMode)
+2. 通信のブロック(enforcementMode)
+====
+
+
+1. 設定
 ----
 
 通信のブロックを行うため設定を変更します。
@@ -189,6 +196,8 @@ LAB の構成全体の画面を開き、 ``ELK`` を開いてください
 
    # sudo su
    # cd /etc/nginx/conf.d
+   # cp ~/back-to-basic_plus-security/waf/waf-l1_demo.conf default.conf
+   # cp ~/back-to-basic_plus-security/waf/waf-l1_custom_log_format.json custom_log_format.json
    cp ~/back-to-basic_plus-security/waf/waf-l2_custom_policy.jsonn custom_policy.json
 
 WAFを設定を確認します
@@ -223,6 +232,8 @@ WAFを設定を確認します
 
   nginx -s reload
 
+2. 動作確認
+----
 
 クロスサイトスクリプティング(XSS)に該当する通信を発生させます。以下のCurlコマンドを実行し、結果を確認します。
 
@@ -308,8 +319,20 @@ Overviewと同様に結果はシンプルです。
 誤検知と判定された場合には、対象Signatureを除外設定にするなどの対処をセキュリティポリシーに対して実施することとなります。
 
 
+参考の情報ですが、curlコマンドの `?a=<script>`` を `?a='or+1=1--` などの文字列に入れ替えると、SQL Injectionのブロックを見ることができますのでご確認ください。
+
 a
 ==================================================================
+1. WAFの設定をデプロイ
+====
+
+1. 設定
+----
+2. 動作確認
+----
+
+
+WAFを設定します
 
 .. code-block:: cmdin
 
