@@ -25,25 +25,38 @@ NGINX Plus のインストール test
    
    ii  nginx-plus-module-njs              25+0.7.0-1~focal                      amd64        NGINX Plus njs dynamic modules
 
-ラボの実施（作成中）
+ラボの実施
 ====
 
-必要なパッケージの取得
+1. 必要なパッケージの取得
+----
 
 .. code-block:: cmdin
    
+   sudo su
+   cd ~/
    git clone https://github.com/hiropo20/back-to-basic_plus-security.git
 
+2. インストールしたNGINX Plusに必要な設定を追加
+----
 
 .. code-block:: cmdin
- 
-  kubectl get pod
+   
+   cat ~/back-to-basic_plus-security/basic/laodmodules.conf /etc/nginx/nginx.conf > /etc/nginx/nginx.conf 
+
+.. code-block:: cmdin
+   
+   head -7  /etc/nginx/nginx.conf
+
 
 .. code-block:: bash
-  :linenos:
   :caption: 実行結果サンプル
 
-  NAME                       READY   STATUS    RESTARTS  AGE
-  coffee-7c86d7d67c-wjxss    1/1     Running   0         1m
-  coffee-7c86d7d67c-8jm9z    1/1     Running   0         1m
-  tea-5c457db9-dc4cs         1/1     Running   0         1m
+   # for NAP WAF
+   load_module modules/ngx_http_app_protect_module.so;
+   # for NAP DoS
+   load_module modules/ngx_http_app_protect_dos_module.so;
+   # for NJS
+   load_module modules/ngx_http_js_module.so;
+   load_module modules/ngx_stream_js_module.so;
+   

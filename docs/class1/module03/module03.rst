@@ -1,305 +1,337 @@
-(参考) バックエンドのアプリケーション＆ELKのデプロイ手順
+NGINX App Protect WAF (NAP WAF)
 #######
 
-ELK
+NAP WAF について
 ====
 
-ELKのセットアップ
+NAP WAFは、ワールドワイドで実績豊富なF5製WAFの機能を移植した、NGINX Plusの動的モジュールで実現するWAFです。
+
+   .. image:: ./media/nap-waf.jpg
+       :width: 400
+
+NAP WAFはNGINXの動的モジュールであるという特徴から、GatewayからIngress Controller、更にコンテナとして柔軟なデプロイが可能です。
+アプリケーションの性質によりセキュリティ機能の実装方法が異なると思いますが、NAP WAFのはその柔軟な適応力から最適な形でWAFを実現することができます。
+
+   .. image:: ./media/nap-waf-structure.jpg
+       :width: 400
+
+NAP WAF
+====
+
+主要な設定について、一つずつ設定と動作確認を行います。
+設定の詳細は、 `こちら <https://docs.nginx.com/nginx-app-protect/configuration-guide/configuration/>`__ の内容を参照してください。
+
+1. WAFの設定をデプロイ
 ----
 
-| ページに記載する手順に従ってELKをセットアップします
-| 参考：\ `NGINX App Protect ELK Dashboard <https://github.com/f5devcentral/nap-dos-elk-dashboards>`__
-
-
-.. NOTE::
-   同時に複数の環境からDocker Imageを取得する場合、Registory側の仕様によりImageの取得が失敗する場合があります。
-   その場合には一旦時間を開けて実行していただくか、別のタイミングでローカルのレジストリに登録するなどの対応を実施ください。
-
-UDF環境では ``docker_host`` にログインし手順を実行します
-
-必要なパッケージの取得
+WAFを設定します
 
 .. code-block:: cmdin
 
    # sudo su
-   cd ~/
-   git clone https://github.com/f5devcentral/f5-waf-elk-dashboards.git
-   git clone https://github.com/f5devcentral/nap-dos-elk-dashboards.git
+   # cd /etc/nginx/conf.d
+   cp ~/back-to-basic_plus-security/waf/waf-l1_demo.conf default.conf
+   cp ~/back-to-basic_plus-security/waf/waf-l1_custom_log_format.json custom_log_format.json
+   cp ~/back-to-basic_plus-security/waf/waf-l1_custom_policy.json custom_policy.json
 
 
-取得したファイルの確認
+WAFを設定を確認します
+
+設定ファイルを確認します。 ``listen 80`` の server block にて各種WAFの設定を読み込んでいます。
+
+.. code-block:: cmdin
+
+  cat default.conf
 
 .. code-block:: bash
   :caption: 実行結果サンプル
 
-   $ ls -lrt
-   total 0
-   drwxrwxr-x. 7 centos centos 155 Jan  6 01:29 f5-waf-elk-dashboards
-   drwxrwxr-x. 6 centos centos 195 Jan  6 01:29 nap-dos-elk-dashboards
+  upstream server_group {
+      zone backend 64k;
+      server security-backend1:80;
+  }
+  # waf
+  server {
+      listen 80;
+      app_protect_enable on;
+      app_protect_security_log_enable on;
+      app_protect_security_log "/etc/nginx/conf.d/custom_log_format.json" syslog:server=elasticsearch:5144;
+  
+      location / {
+          app_protect_policy_file "/etc/nginx/conf.d/custom_policy.json";
+  
+          proxy_pass http://server_group;
+      }
+  }
+  # no waf
+  server {
+      listen 81;
+      location / {
+          proxy_pass http://server_group;
+      }
+  }
 
 
-NAP DoSで利用するLogstashの設定ファイルをNAP WAFのディレクトリへコピー
-
-.. code-block:: cmdin
-
-   cp nap-dos-elk-dashboards/logstash/conf.d/apdos-logstash.conf f5-waf-elk-dashboards/logstash/conf.d/
-
-
-以下のコマンドを実行しファイルを作成
-
-.. code-block:: cmdin
-
-   cat << EOF > f5-waf-elk-dashboards/logstash/pipelines.yml
-   - pipeline.id: napwaf
-     path.config: "/opt/logstash/config/30-waf-logs-full-logstash.conf"
-
-   - pipeline.id: napdos
-     path.config: "/opt/logstash/config/apdos-logstash.conf"
-   EOF
-
-
-| 今回のサンプルで利用するELKでは複数のPiplineを利用するため、追加のSyslog Portが必要になります。
-| 以下の通り ``docker-compose.yaml`` ファイルの内容を修正します
-
-.. code-block:: cmdin
-
-   cp f5-waf-elk-dashboards/docker-compose.yaml f5-waf-elk-dashboards/docker-compose.yaml-bak
-   cat << EOF > f5-waf-elk-dashboards/docker-compose.yaml
-   version: "3.3"
-   services:
-     elasticsearch:
-      image: sebp/elk:793
-      restart: always
-      volumes:
-         - ./logstash/pipelines.yml:/opt/logstash/config/pipelines.yml:ro
-         - ./logstash/conf.d/30-waf-logs-full-logstash.conf:/opt/logstash/config/30-waf-logs-full-logstash.conf:ro
-         - ./logstash/conf.d/apdos-logstash.conf:/opt/logstash/config/apdos-logstash.conf:ro
-         - elk:/var/lib/elasticsearch
-      ports:
-         - 9200:9200/tcp
-         - 5601:5601/tcp
-         - 5144:5144/tcp
-         - 5261:5261/tcp
-         - 5561:5561/udp
-   volumes:
-     elk:
-   EOF
-
-変更内容の確認
+NAP WAFでは、ログフォーマットをJSONファイルで指定します。
+設定ファイルの内容を確認します。
 
 .. code-block:: cmdin
 
-   diff -u f5-waf-elk-dashboards/docker-compose.yaml-bak f5-waf-elk-dashboards/docker-compose.yaml
-
-
-ELKの実行
-
-.. code-block:: cmdin
-
-   cd f5-waf-elk-dashboards
-   docker-compose -f docker-compose.yaml up -d
-
-以下が出力されることを確認する
+  cat custom_log_format.json
 
 .. code-block:: bash
   :caption: 実行結果サンプル
 
-   ※ docker-compose の出力結果
-   Creating f5-waf-elk-dashboards_elasticsearch_1 ... done
+
+  {
+      "filter": {
+          "request_type": "all"
+      },
+      "content": {
+          "format": "default",
+          "max_request_size": "any",
+          "max_message_size": "10k"
+      }
+  }
+
+
+NAP WAFでは、WAFののセキュリティポリシーをJSONファイルで指定します。
+設定ファイルの内容を確認します。
 
 .. code-block:: cmdin
 
-   docker ps
+  cat custom_policy.json
 
 .. code-block:: bash
   :caption: 実行結果サンプル
 
-   CONTAINER ID   IMAGE          COMMAND                  CREATED         STATUS         PORTS                                                                                                                                                                                                                                                 NAMES
-   3b5bb60d2d35   sebp/elk:793   "/usr/local/bin/star…"   3 minutes ago   Up 2 minutes   0.0.0.0:5144->5144/tcp, :::5144->5144/tcp, 0.0.0.0:5261->5261/tcp, :::5261->5261/tcp, 0.0.0.0:5601->5601/tcp, :::5601->5601/tcp, 5044/tcp, 9300/tcp, 9600/tcp, 0.0.0.0:9200->9200/tcp, :::9200->9200/tcp, 0.0.0.0:5561->5561/udp, :::5561->5561/udp   f5-waf-elk-dashboards_elasticsearch_1
 
+  {
+      "policy":
+      {
+          "name": "policy-acceptall",
+          "template": { "name": "POLICY_TEMPLATE_NGINX_BASE" },
+          "applicationLanguage": "utf-8",
+          "enforcementMode": "transparent"
+      }
+  }
+  
 
-起動したELKのコンテナでbashを開く
+このサンプルでは、まずWAF設定が正しく設定されることを確認しています。
+``enforcementMode`` で ``transparent`` と指定しているため、通信のBlockは行われません。
 
-.. code-block:: cmdin
-
-   docker exec -it f5-waf-elk-dashboards_elasticsearch_1 /bin/bash
-   
-   root@3b5bb60d2d35:/#
-
-Pluginを設定する(ELKのbash上で行う)
-
-.. code-block:: cmdin
-
-   # logstash の停止
-   service logstash stop
-   # logstash pluginのinstall
-   /opt/logstash/bin/logstash-plugin install logstash-output-syslog
-   /opt/logstash/bin/logstash-plugin install logstash-input-syslog
-   /opt/logstash/bin/logstash-plugin install logstash-input-tcp
-   /opt/logstash/bin/logstash-plugin install logstash-input-udp
-
-   ※ 各インストールコマンドの最後に Installation successful が表示されることを確認してください
-
-logstashの設定ファイルが配置されていることを確認します。
+プロセスを再起動し、設定を反映します
 
 .. code-block:: cmdin
 
-   cat /etc/logstash/conf.d/apdos-logstash.conf
+  nginx -s reload
 
-ファイルが存在しない場合、一度コンテナのbashから抜け、ターミナルからファイルを読み込みます
-その他エラーについては `こちらの手順を参照してください <https://github.com/f5devcentral/nap-dos-elk-dashboards#deploying-elk-stack>`__
+
+まず初めにサンプルアプリケーションにアクセスすることを確認します。
+
+バックエンドには ``OWASP Juice Shop`` というアプリケーションが動作しています。
+正しく接続できることを確認します
 
 .. code-block:: cmdin
 
-   # コンテナのbashから抜ける
-   root@3b5bb60d2d35:/# exit
-
-   # host上で以下コマンドを実行
-   cd ~/nap-dos-elk-dashboards
-   ls | grep apdos_mapping.json
-   curl -XPUT "http://localhost:9200/app-protect-dos-logs"  -H "Content-Type: application/json" -d  @apdos_mapping.json
+  curl -s localhost  | grep title
 
 .. code-block:: bash
   :caption: 実行結果サンプル
 
-   {"acknowledged":true,"shards_acknowledged":true,"index":"app-protect-dos-logs"}[centos@ip-10-1-1-5 nap-dos-elk-dashboards]$
+  <title>OWASP Juice Shop</title>
 
 
-正しく追加されたことを確認
+この通信の結果をELKで取得していることを確認します
 
-.. code-block:: cmdin
+``ELK`` を開いてください
 
-   # cd ~/nap-dos-elk-dashboards
-   curl -s -XGET "http://localhost:9200/_cat/indices" | grep app-protect
+   .. image:: ./media/udf_docker_elk.jpg
+       :width: 400
 
-.. code-block:: bash
-  :caption: 実行結果サンプル
+左上メニューを開き ``Discover`` をクリックしてください
 
-   yellow open app-protect-dos-logs           Gqkh0O2VSVuRFBkbCzuJUA 1 1 0   0    208b    208b
+   .. image:: ./media/elk-menu.jpg
+       :width: 400
 
-Geo Fieldの更新
+   .. image:: ./media/elk-menu2.jpg
+       :width: 400
 
-.. code-block:: cmdin
+表示された画面の `+ Add filter` の下にすでに登録されている ``waf-logs-*`` を選択肢てください
 
-   # cd ~/nap-dos-elk-dashboards
-   curl -XPOST "http://localhost:9200/app-protect-dos-logs/_mapping"  -H "Content-Type: application/json" -d  @apdos_geo_mapping.json
+   .. image:: ./media/elk-discover-waf.jpg
+       :width: 400
 
-App Protect DoS の DashboardをImport
+正しくNAP WAFよりログが転送されている場合、画面のようなグラフが表示されます。
+画面の内容が最新の状態となっていない場合、画面右上の時間を確認の上、 ``Refresh`` をクリックしてください。
 
-.. code-block:: cmdin
+   .. image:: ./media/elk-discover-waf2.jpg
+       :width: 400
 
-   # cd ~/nap-dos-elk-dashboards
-   KIBANA_CONTAINER_URL=http://localhost:5601
-   jq -s . kibana/apdos-dashboard.ndjson | jq '{"objects": . }' | \
-    curl -k --location --request POST "$KIBANA_CONTAINER_URL/api/kibana/dashboards/import" \
-        --header 'kbn-xsrf: true' \
-        --header 'Content-Type: text/plain' -d @- \
-        | jq
+表示されたログの詳細を一つ確認してみましょう。
+当該のログの左側 ``∨`` をクリックすると詳細が表示されます。参考に内容を確認すると ``bot_signature_name`` に ``curl`` と表示されていることがわかります。
 
-App Protect WAF のDashboardをImport
+   .. image:: ./media/elk-l1-discover.jpg
+       :width: 400
 
-.. code-block:: cmdin
-
-   cd ~/f5-waf-elk-dashboards
-   jq -s . kibana/false-positives-dashboards.ndjson | jq '{"objects": . }' | curl -k --location --request POST "$KIBANA_CONTAINER_URL/api/kibana/dashboards/import"     --header 'kbn-xsrf: true'     --header 'Content-Type: text/plain' -d @-     | jq
-   jq -s . kibana/overview-dashboard.ndjson | jq '{"objects": . }' | curl -k --location --request POST "$KIBANA_CONTAINER_URL/api/kibana/dashboards/import"     --header 'kbn-xsrf: true'     --header 'Content-Type: text/plain' -d @-     | jq
-
-再度ELKのbashを開く
-
-.. code-block:: cmdin
-
-   docker exec -it f5-waf-elk-dashboards_elasticsearch_1 /bin/bash
-
-logstashを起動
-
-.. code-block:: cmdin
-
-   # 起動
-   service logstash start
-
-.. code-block:: bash
-  :caption: 実行結果サンプル
-
-   logstash started.
-
-.. code-block:: cmdin
-
-   service logstash status
-
-.. code-block:: bash
-  :caption: 実行結果サンプル
-
-   logstash is running
-
-.. NOTE::
-
-   ELKは起動に時間がかかります。以下のコマンドを実行し想定した結果となることを確認します。
-
-.. code-block:: cmdin
-      
-   docker exec -it  $(docker ps -a -f name=f5-waf-elk-dashboards_elasticsearch_1  -q) ps -aef
-
-.. code-block:: bash
-  :caption: 実行結果サンプル
-
-   UID        PID  PPID  C STIME TTY          TIME CMD
-   root         1     0  0 01:48 ?        00:00:00 /bin/bash /usr/local/bin/start.s
-   root        13     1  0 01:48 ?        00:00:00 /usr/sbin/cron
-   elastic+   191     1  1 01:48 ?        00:01:48 /opt/elasticsearch/jdk/bin/java
-   elastic+   215   191  0 01:48 ?        00:00:00 /opt/elasticsearch/modules/x-pac
-   logstash   305     1  2 01:48 ?        00:02:13 /usr/bin/java -Xms1g -Xmx1g -XX:
-   kibana     327     1  1 01:48 ?        00:01:21 /opt/kibana/bin/../node/bin/node
-   root       330     1  0 01:48 ?        00:00:00 tail -f /var/log/elasticsearch/e
-   root       518     0  0 03:37 pts/0    00:00:00 ps -aef
-
-.. code-block:: cmdin
-
-   docker logs  $(docker ps -a -f name=f5-waf-elk-dashboards_elasticsearch_1  -q)| grep running
-
-.. code-block:: bash
-  :caption: 実行結果サンプル
-
-   [2022-01-06T01:48:49,755][INFO ][logstash.agent           ] Pipelines running {:count=>2, :running_pipelines=>[:napdos, :napwaf], :non_running_pipelines=>[]}
-   {"type":"log","@timestamp":"2022-01-06T01:49:06Z","tags":["info","http","server","Kibana"],"pid":327,"message":"http server running at http://0.0.0.0:5601"}
-   {"type":"log","@timestamp":"2022-01-06T01:49:05Z","tags":["listening","info"],"pid":327,"message":"Server running at http://0.0.0.0:5601"}
-
-.. code-block:: cmdin
-
-   一定時間経過して状況が改善しない場合、再度docker-composeを実行してください
-   docker-compose -f docker-compose.yaml down
-   docker-compose -f docker-compose.yaml up -d
-
-ブラウザからELKを開き、Menu > Kibana > Dashboardで正しく3つのDashboardが見えることを確認する
+通信は確認した通り許可されておりますが、Curlコマンドを利用した通信が到達していることが確認できます。
 
 
-バックエンドアプリケーション
-====
-
-バックエンドアプリケーションのデプロイ
+2. 通信をブロック(enforcementMode)
 ----
 
-`OWASP Juice Shop <https://owasp.org/www-project-juice-shop/>`__ を動作させます。
-OWASPが提供する脆弱なサーバとなりますので本テスト完了後、適切に停止させてください
+通信のブロックを行うため設定を変更します。
+``Default Policy`` の設定・動作の詳細については、 `こちら Basic Configuration and the Default Policy <https://docs.nginx.com/nginx-app-protect/configuration-guide/configuration/#basic-configuration-and-the-default-policy>`__ を参照してください
 
-Dockerを動作させ、以下コマンドでOWASP Juice Shopを ``80`` で待ち受けるよう設定してください
+それでは、WAFのセキュリティポリシーのみ変更し、設定を反映します
+
+.. code-block:: cmdin
+
+   # sudo su
+   # cd /etc/nginx/conf.d
+   cp ~/back-to-basic_plus-security/waf/waf-l2_custom_policy.jsonn custom_policy.json
+
+WAFを設定を確認します
+
+今回確認するポリシーについて前回の内容との差分を確認します。
+
+.. code-block:: cmdin
+
+   diff -u ~/back-to-basic_plus-security/waf/waf-l1_custom_policy.json custom_policy.json
 
 .. code-block:: bash
-  :linenos:
-  :caption: OWASP Juice Shop のデプロイ方法
+  :caption: 実行結果サンプル
 
-   # OWASP Juice-shop を実行してください。初回はDocker Imageの取得のため起動に少し時間がかかります
+   --- /root/back-to-basic_plus-security/waf/waf-l1_custom_policy.json     2022-04-14 23:27:19.383236359 +0900
+   +++ custom_policy.json  2022-04-14 23:21:06.978541812 +0900
+   @@ -4,6 +4,6 @@
+            "name": "policy-acceptall",
+            "template": { "name": "POLICY_TEMPLATE_NGINX_BASE" },
+            "applicationLanguage": "utf-8",
+   -        "enforcementMode": "transparent"
+   +        "enforcementMode": "blocking"
+        }
+    }
 
-   $ docker run -d --name dcs-juice-shop -p 80:3000 bkimminich/juice-shop 
-   8b69c6f97763b7c08e4afde42942c046dcab400743d756fc36a833d7bb8fa507
-   
-   # 正しく起動していることを確認してください
-
-   $ docker ps
-   CONTAINER ID   IMAGE                   COMMAND                  CREATED         STATUS         PORTS                                   NAMES
-   8b69c6f97763   bkimminich/juice-shop   "docker-entrypoint.s…"   3 seconds ago   Up 2 seconds   0.0.0.0:80->3000/tcp, :::80->3000/tcp   dcs-juice-shop
-
-   # 利用が完了しましたら、対象のDocker Containerを停止してください
-   $ docker stop $(docker ps -a -f name=dcs-juice-shop  -q)
-   $ docker rm $(docker ps -a -f name=dcs-juice-shop  -q)
+``enforcementMode`` で ``blocking`` と指定されていることがわかります。
+この設定により通信をブロックすることが可能です。
 
 
+プロセスを再起動し、設定を反映します
+
+.. code-block:: cmdin
+
+  nginx -s reload
+
+
+クロスサイトスクリプティング(XSS)に該当する通信を発生させます。以下のCurlコマンドを実行し、結果を確認します。
+
+.. code-block:: cmdin
+
+  curl -s "localhost/?a=<script>"
+
+.. code-block:: bash
+  :caption: 実行結果サンプル
+
+  <html>
+      <head>
+          <title>Request Rejected</title>
+      </head>
+      <body>The requested URL was rejected. Please consult with your administrator.<br><br>
+          Your support ID is: 935833362169160317<br><br>
+          <a href='javascript:history.back();'>[Go Back]</a>
+      </body>
+  </html>
+
+先程確認したようにバックエンドのアプリケーションは表示されず、 ``Request Rejected`` の文字とともにHTMLが応答されていることがわかります。
+この実行サンプルでは表示を確認するためテキストを一部整形しております。皆様の環境では改行がなく結果が表示されていると思います
+
+
+それではログの情報を確認します。
+
+``ELK`` > ``Discover`` > ``waf-logs-*`` を開き、表示された結果の ``∨`` をクリックし、詳細を表示してください。
+
+   .. image:: ./media/elk-l2-discover.jpg
+       :width: 400
+
+この項目では、ELKのGUIでどの様に表示されるか確認します。
+
+   .. image:: ./media/elk-l2-discover-detail.jpg
+       :width: 400
+
+主要な項目について確認します
+
+- 中段に表示されている ``support_id`` をまず最初に説明します。先程のBlock Pageを確認してください。こちらに表示されている `Support ID` と一致していることが確認できます。この様にNAP WAFでは、セキュリティログを一意に特定する値として `Support ID` が存在します。攻撃が拒否された場合には、Block された画面(HTML)により該当のログを特定することが可能です
+- ``bot_category`` は `HTTP Library` 、 ``bot_signature_name`` は `curl` となっています
+- ``client_class`` は Bot SIgnature によるClassというカテゴリを示しており、 `Untrusted Bot` となっています
+- ``outcome`` は 処理の結果を示しており、 ``REJECETD(拒否)`` となることがわかります
+- ``sig_`` から始まる項目が、 `signature` に関する情報を示しております。各項目は、Signature ID、Signature Name、Signature Set Name となっています
+- ``voilation_`` から始まる項目が、 `VIOLATION` に関する情報を示しております。通信がどのような脅威に該当するのか確認できます
+- VIOLATIONの中で ``violation_rating`` があり、これはその重要度(危険度)を示しています。NAP WAFのDefault Policyでは、検知した通信で複数の問題が確認され、その結果判定されたRatingが一定の値より高い場合に通信が拒否される設定となっています。
+
+``JSON`` 形式の表示は、該当ログの ``JSON`` タブをクリックしてください
+
+   .. image:: ./media/elk-l2-discover-json.jpg
+       :width: 400
+
+次にELKが提供するもう一つの機能である、 ``Dashboard`` を確認します
+
+``ELK`` > ``Dashboard`` を開き ``Overview`` をクリックしてください。
+この画面はWAFのステータスを俯瞰する画面となります。
+
+   .. image:: ./media/elk-l2-dashboard-select-overview.jpg
+       :width: 400
+
+通信量が少ないため内容は大変シンプルとなっております。
+
+   .. image:: ./media/elk-l2-dashboard-overview.jpg
+       :width: 400
+
+こちらの内容から横断的に通信の状況を把握することができるようになっています。
+リクエストの処理結果の割合や、クライアントIPアドレスの分布、アクセス先のURL、検知したSignatureや、Violation等の割当を知ることができます。
+この画面を見ることにより、今の検知状況や頻繁に発生・検知している攻撃などを俯瞰的に知ることができます。
+
+
+``ELK`` > ``Dashboard`` を開き ``False Positives`` をクリックしてください。
+
+   .. image:: ./media/elk-l2-dashboard-select-falsepositive.jpg
+       :width: 400
+
+Overviewと同様に結果はシンプルです。
+
+   .. image:: ./media/elk-l2-dashboard-falsepositive.jpg
+       :width: 400
+
+以下のグラフは、ある瞬間に特定のシグネチャや違反にヒットしたユニークなIPの総数を表示します。
+これらのグラフでスパイクが発生している場合、多くのクライアントが同じルールをトリガーしていることを意味し、特定のクライアントに依存しない検出結果、
+つまり ``誤検知の可能性の高い通信`` を見つけることを目的としています。
+誤検知と判定された場合には、対象Signatureを除外設定にするなどの対処をセキュリティポリシーに対して実施することとなります。
+
+
+a
+==================================================================
+
+.. code-block:: cmdin
+
+  cat default.conf
+
+.. code-block:: bash
+  :caption: 実行結果サンプル
+
+
+プロセスを再起動し、設定を反映します
+
+.. code-block:: cmdin
+
+  nginx -s reload
+
+
+
+
+.. code-block:: cmdin
+
+.. code-block:: bash
+  :caption: 実行結果サンプル
+
+b
+==================================================================
