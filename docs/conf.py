@@ -8,7 +8,7 @@
 classname = "F5 Networks Japan Technical Information"
 
 # OPTIONAL: The URL to the GitHub Repository for this class
-github_url = "https://github.com/BeF5/f5j-nginx-plus-lab2-security"
+github_url = "https://github.com/BeF5/f5j-nginx-ingress-controller-lab1"
 
 git_branch_name = 'master'
 
@@ -92,7 +92,7 @@ source_suffix = ['.rst', '.md']
 master_doc = 'index'
 
 # General information about the project.
-project = u'NGINX Plus Lab2 (Security)'
+project = u'NGINX Plus Ingress Controller Lab'
 copyright = u'F5ネットワークスジャパン合同会社'
 author = u'F5ネットワークスジャパン合同会社'
 
@@ -145,6 +145,7 @@ templates_path = ['_templates']
 # so a file named "default.css" will overwrite the builtin "default.css".
 #
 html_static_path = ['_static']
+html_css_files = ['css/f5_agility_theme.css']
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
