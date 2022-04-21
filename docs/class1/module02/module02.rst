@@ -1,7 +1,7 @@
 NGINX LAB
 #######
 
-NGINX Plus のインストール test
+NGINX Plus のインストール
 ====
 
 1. NGINX Plus、アドオンモジュールのインストール (15min)
@@ -54,7 +54,7 @@ NGINX Plus のインストール test
 .. code-block:: bash
   :caption: 実行結果サンプル
   :linenos:
-  
+
    # for NAP WAF
    load_module modules/ngx_http_app_protect_module.so;
    # for NAP DoS
