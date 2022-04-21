@@ -31,6 +31,7 @@ UDF環境では ``docker_host`` にログインし手順を実行します
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
    $ ls -lrt
    total 0
@@ -103,6 +104,7 @@ ELKの実行
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
    ※ docker-compose の出力結果
    Creating f5-waf-elk-dashboards_elasticsearch_1 ... done
@@ -113,6 +115,7 @@ ELKの実行
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
    CONTAINER ID   IMAGE          COMMAND                  CREATED         STATUS         PORTS                                                                                                                                                                                                                                                 NAMES
    3b5bb60d2d35   sebp/elk:793   "/usr/local/bin/star…"   3 minutes ago   Up 2 minutes   0.0.0.0:5144->5144/tcp, :::5144->5144/tcp, 0.0.0.0:5261->5261/tcp, :::5261->5261/tcp, 0.0.0.0:5601->5601/tcp, :::5601->5601/tcp, 5044/tcp, 9300/tcp, 9600/tcp, 0.0.0.0:9200->9200/tcp, :::9200->9200/tcp, 0.0.0.0:5561->5561/udp, :::5561->5561/udp   f5-waf-elk-dashboards_elasticsearch_1
@@ -161,6 +164,7 @@ logstashの設定ファイルが配置されていることを確認します。
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
    {"acknowledged":true,"shards_acknowledged":true,"index":"app-protect-dos-logs"}[centos@ip-10-1-1-5 nap-dos-elk-dashboards]$
 
@@ -174,6 +178,7 @@ logstashの設定ファイルが配置されていることを確認します。
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
    yellow open app-protect-dos-logs           Gqkh0O2VSVuRFBkbCzuJUA 1 1 0   0    208b    208b
 
@@ -219,6 +224,7 @@ logstashを起動
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
    logstash started.
 
@@ -228,6 +234,7 @@ logstashを起動
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
    logstash is running
 
@@ -241,6 +248,7 @@ logstashを起動
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
    UID        PID  PPID  C STIME TTY          TIME CMD
    root         1     0  0 01:48 ?        00:00:00 /bin/bash /usr/local/bin/start.s
@@ -258,6 +266,7 @@ logstashを起動
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
    [2022-01-06T01:48:49,755][INFO ][logstash.agent           ] Pipelines running {:count=>2, :running_pipelines=>[:napdos, :napwaf], :non_running_pipelines=>[]}
    {"type":"log","@timestamp":"2022-01-06T01:49:06Z","tags":["info","http","server","Kibana"],"pid":327,"message":"http server running at http://0.0.0.0:5601"}
