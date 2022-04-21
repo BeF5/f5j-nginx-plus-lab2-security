@@ -35,14 +35,15 @@ NGINX Plus のインストール
    
    sudo su
    cd ~/
-   git clone https://github.com/hiropo20/back-to-basic_plus-security.git
+   git clone https://github.com/BeF5/f5j-nginx-plus-lab2-security-conf.git
 
 2. インストールしたNGINX Plusに必要な設定を追加
 ----
 
 .. code-block:: cmdin
    
-   cat ~/back-to-basic_plus-security/base/laodmodules.conf /etc/nginx/nginx.conf > /etc/nginx/nginx.conf 
+   mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf-bak
+   cat ~/f5j-nginx-plus-lab2-security-conf/base/loadmodules.conf /etc/nginx/nginx.conf-bak > /etc/nginx/nginx.conf 
 
 設定内容を確認します
 

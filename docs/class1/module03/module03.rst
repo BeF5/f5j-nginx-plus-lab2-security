@@ -29,10 +29,10 @@ WAFを設定します
 .. code-block:: cmdin
 
    # sudo su
-   # cd /etc/nginx/conf.d
-   cp ~/back-to-basic_plus-security/waf/waf-l1_demo.conf default.conf
-   cp ~/back-to-basic_plus-security/waf/waf-l1_custom_log_format.json custom_log_format.json
-   cp ~/back-to-basic_plus-security/waf/waf-l1_custom_policy.json custom_policy.json
+   cd /etc/nginx/conf.d
+   cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_demo.conf default.conf
+   cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_custom_log_format.json custom_log_format.json
+   cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_custom_policy.json custom_policy.json
 
 
 WAFの設定を確認します
@@ -61,7 +61,6 @@ WAFの設定を確認します
   
       location / {
           app_protect_policy_file "/etc/nginx/conf.d/custom_policy.json";
-  
           proxy_pass http://server_group;
       }
   }
@@ -152,7 +151,7 @@ WAFの設定を確認します
 
 この通信の結果をELKで取得していることを確認します
 
-``Jump Host`` より ``ELK`` を開いてください
+``Jump Host`` でブラウザを起動し、 ``http://elk:5601`` を開いてください
 
 .. NOTE::
    クライアント端末のブラウザより、以下の手順で接続いただくことも可能です
@@ -201,9 +200,9 @@ WAFの設定を確認します
 
    # sudo su
    # cd /etc/nginx/conf.d
-   # cp ~/back-to-basic_plus-security/waf/waf-l1_demo.conf default.conf
-   # cp ~/back-to-basic_plus-security/waf/waf-l1_custom_log_format.json custom_log_format.json
-   cp ~/back-to-basic_plus-security/waf/waf-l2_custom_policy.json custom_policy.json
+   # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_demo.conf default.conf
+   # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_custom_log_format.json custom_log_format.json
+   cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l2_custom_policy.json custom_policy.json
 
 WAFを設定を確認します
 
@@ -211,13 +210,13 @@ WAFを設定を確認します
 
 .. code-block:: cmdin
 
-   diff -u ~/back-to-basic_plus-security/waf/waf-l1_custom_policy.json custom_policy.json
+   diff -u ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_custom_policy.json custom_policy.json
 
 .. code-block:: bash
   :caption: 実行結果サンプル
   :linenos:
 
-   --- /root/back-to-basic_plus-security/waf/waf-l1_custom_policy.json     2022-04-14 23:27:19.383236359 +0900
+   --- /root/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_custom_policy.json     2022-04-14 23:27:19.383236359 +0900
    +++ custom_policy.json  2022-04-14 23:21:06.978541812 +0900
    @@ -1,9 +1,9 @@
     {
@@ -268,9 +267,8 @@ WAFを設定を確認します
 | この実行サンプルでは表示を確認するためテキストを一部整形しております。皆様の環境では改行がなく結果が表示されていると思います
 
 
-それではログの情報を確認します。
-
-``ELK`` > ``Discover`` > ``waf-logs-*`` を開き、表示された結果の ``>`` をクリックし、詳細を表示してください。
+| それではログの情報を確認します。 ``Jump Host`` でブラウザを起動し、 ``http://elk:5601`` を開いてください
+| ``ELK`` > ``Discover`` > ``waf-logs-*`` を開き、表示された結果の ``>`` をクリックし、詳細を表示してください。
 
    .. image:: ./media/elk-l2-discover.jpg
        :width: 400
@@ -347,7 +345,7 @@ Overviewと同様に結果はシンプルです。
 
 セキュリティポリシーの設定は `2. 通信のブロック <https://f5j-nginx-plus-lab2-security.readthedocs.io/en/latest/class1/module03/module03.html#id3>`__ のポリシーを利用します
 
-``Jump Host`` より ``Owasp Juice Shop`` にアクセスします
+``Jump Host`` より ``Owasp Juice Shop`` にアクセスします。ブラウザを起動し、 ``http://juice-shop`` を開いてください
 
 | 画面右上 ``Account`` > ``Login`` をクリックします。
 | すでに別のアカウントでログインしている場合、一度ログアウトをしてからこの作業を行ってください。
@@ -375,7 +373,7 @@ Webページ側で期待した応答と異なるため、 ``[object Object]`` �
 | 開発者ツールの ``Network`` を開き、検索ボックスに ``location`` を入力してください。
 | 下のリクエストの ``login`` を選択し、 ``Response`` を確認すると、NAP WAFが応答した情報が返されていることがわかります。
 
-それではログの情報を確認します。
+それではログの情報を確認します。 ``Jump Host`` でブラウザを起動し、 ``http://elk:5601`` を開いてください
 
 | ``ELK`` > ``Discover`` > ``waf-logs-*`` を開きます。
 | 画面上部の検索窓に ``SQL`` と入力し ``Enter`` を押してください
@@ -413,9 +411,9 @@ WAFのセキュリティポリシーを変更し、設定を反映します
 
    # sudo su
    # cd /etc/nginx/conf.d
-   # cp ~/back-to-basic_plus-security/waf/waf-l1_demo.conf default.conf
-   # cp ~/back-to-basic_plus-security/waf/waf-l1_custom_log_format.json custom_log_format.json
-   cp ~/back-to-basic_plus-security/waf/waf-l3_custom_policy.json custom_policy.json
+   # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_demo.conf default.conf
+   # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_custom_log_format.json custom_log_format.json
+   cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l3_custom_policy.json custom_policy.json
 
 WAFを設定を確認します
 
@@ -423,13 +421,13 @@ WAFを設定を確認します
 
 .. code-block:: cmdin
 
-   diff -u ~/back-to-basic_plus-security/waf/waf-l2_custom_policy.json custom_policy.json
+   diff -u ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l2_custom_policy.json custom_policy.json
 
 .. code-block:: bash
   :caption: 実行結果サンプル
   :linenos:
 
-   --- /root/back-to-basic_plus-security/waf/waf-l2_custom_policy.json     2022-04-14 23:27:46.608110394 +0900
+   --- /root/f5j-nginx-plus-lab2-security-conf/waf/waf-l2_custom_policy.json     2022-04-14 23:27:46.608110394 +0900
    +++ custom_policy.json  2022-04-19 16:53:25.046672699 +0900
    @@ -1,9 +1,31 @@
     {
@@ -481,7 +479,7 @@ WAFを設定を確認します
 4. 動作確認
 ----
 
-``Jump Host`` より ``Owasp Juice Shop`` にアクセスします
+``Jump Host`` より ``Owasp Juice Shop`` にアクセスします。ブラウザを起動し、 ``http://juice-shop`` を開いてください
 
 | 画面右上 ``Account`` > ``Login`` をクリックします。
 | すでに別のアカウントでログインしている場合、一度ログアウトをしてからこの作業を行ってください。
@@ -512,7 +510,7 @@ WAFを設定を確認します
        :width: 400
 
 
-それではログの情報を確認します。
+それではログの情報を確認します。 ``Jump Host`` でブラウザを起動し、 ``http://elk:5601`` を開いてください
 
 ``ELK`` > ``Discover`` > ``waf-logs-*`` を開きます。
 画面上部の検索窓に ``SQL`` と入力し ``Enter`` を押してください
@@ -559,9 +557,9 @@ WAFのセキュリティポリシーを変更し、設定を反映します
 
    # sudo su
    # cd /etc/nginx/conf.d
-   # cp ~/back-to-basic_plus-security/waf/waf-l1_demo.conf default.conf
-   # cp ~/back-to-basic_plus-security/waf/waf-l1_custom_log_format.json custom_log_format.json
-   cp ~/back-to-basic_plus-security/waf/waf-l4_custom_policy.json custom_policy.json
+   # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_demo.conf default.conf
+   # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_custom_log_format.json custom_log_format.json
+   cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l4_custom_policy.json custom_policy.json
 
 WAFを設定を確認します
 
@@ -569,13 +567,13 @@ WAFを設定を確認します
 
 .. code-block:: cmdin
 
-   diff -u ~/back-to-basic_plus-security/waf/waf-l2_custom_policy.json custom_policy.json
+   diff -u ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l2_custom_policy.json custom_policy.json
 
 .. code-block:: bash
   :caption: 実行結果サンプル
   :linenos:
 
-   --- /root/back-to-basic_plus-security/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
+   --- /root/f5j-nginx-plus-lab2-security-conf/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
    +++ custom_policy.json  2022-04-20 14:07:56.299902065 +0900
    @@ -1,9 +1,17 @@
     {
@@ -612,7 +610,7 @@ WAFを設定を確認します
 2. 動作確認
 ----
 
-``Jump Host`` より ``Owasp Juice Shop`` にアクセスします
+``Jump Host`` より ``Owasp Juice Shop`` にアクセスします。ブラウザを起動し、 ``http://juice-shop`` を開いてください
 
 | 画面右上 ``Account`` > ``Login`` をクリックします。
 | すでに別のアカウントでログインしている場合、一度ログアウトをしてからこの作業を行ってください。
@@ -636,6 +634,7 @@ WAFを設定を確認します
 
 ログを確認すると、 ``SQL Injeciton`` の動作確認と同様の内容が確認できます。
 
+| ``Jump Host`` でブラウザを起動し、 ``http://elk:5601`` を開いてください。
 | ``ELK`` > ``Discover`` > ``waf-logs-*`` を開きます。
 | 画面上部の検索窓に ``SQL`` と入力し ``Enter`` を押してください。
 | ``SQL Injection`` として検知され通信がブロックされたことがわかります。
@@ -660,9 +659,9 @@ WAFのセキュリティポリシーを変更し、設定を反映します
 
    # sudo su
    # cd /etc/nginx/conf.d
-   # cp ~/back-to-basic_plus-security/waf/waf-l1_demo.conf default.conf
-   # cp ~/back-to-basic_plus-security/waf/waf-l1_custom_log_format.json custom_log_format.json
-   cp ~/back-to-basic_plus-security/waf/waf-l5_custom_policy.json custom_policy.json
+   # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_demo.conf default.conf
+   # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_custom_log_format.json custom_log_format.json
+   cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l5_custom_policy.json custom_policy.json
 
 WAFを設定を確認します
 
@@ -670,13 +669,13 @@ WAFを設定を確認します
 
 .. code-block:: cmdin
 
-   diff -u ~/back-to-basic_plus-security/waf/waf-l2_custom_policy.json custom_policy.json
+   diff -u ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l2_custom_policy.json custom_policy.json
 
 .. code-block:: bash
   :caption: 実行結果サンプル
   :linenos:
 
-   --- /root/back-to-basic_plus-security/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
+   --- /root/f5j-nginx-plus-lab2-security-conf/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
    +++ custom_policy.json  2022-04-20 17:24:28.367618648 +0900
    @@ -1,9 +1,14 @@
     {
@@ -721,9 +720,9 @@ Curl コマンドを使ってリクエストを送信します。 ``mypass`` と
   <title>OWASP Juice Shop</title>
 
 通信はエラーなく終了しました。
-ログを確認します。
 
-``ELK`` > ``Discover`` > ``waf-logs-*`` を開きます。
+| ログを確認します。 ``Jump Host`` でブラウザを起動し、 ``http://elk:5601`` を開いてください。
+| ``ELK`` > ``Discover`` > ``waf-logs-*`` を開きます。
 
    .. image:: ./media/elk-discover-waflogs.jpg
        :width: 400
@@ -783,9 +782,9 @@ Sensitive Parameterの他、NAP WAFではより詳細な制御をすることが
 
    # sudo su
    # cd /etc/nginx/conf.d
-   # cp ~/back-to-basic_plus-security/waf/waf-l1_demo.conf default.conf
-   # cp ~/back-to-basic_plus-security/waf/waf-l1_custom_log_format.json custom_log_format.json
-   cp ~/back-to-basic_plus-security/waf/waf-l6_custom_policy.json custom_policy.json
+   # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_demo.conf default.conf
+   # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_custom_log_format.json custom_log_format.json
+   cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l6_custom_policy.json custom_policy.json
 
 WAFを設定を確認します
 
@@ -793,13 +792,13 @@ WAFを設定を確認します
 
 .. code-block:: cmdin
 
-   diff -u ~/back-to-basic_plus-security/waf/waf-l2_custom_policy.json custom_policy.json
+   diff -u ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l2_custom_policy.json custom_policy.json
 
 .. code-block:: bash
   :caption: 実行結果サンプル
   :linenos:
 
-   --- /root/back-to-basic_plus-security/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
+   --- /root/f5j-nginx-plus-lab2-security-conf/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
    +++ custom_policy.json  2022-04-21 00:27:37.705482111 +0900
    @@ -1,9 +1,93 @@
     {
@@ -919,7 +918,7 @@ WAFを設定を確認します
    .. image:: ./media/chrome-setusername-longname.jpg
        :width: 400
 
-ログを確認します。
+ログを確認します。 ``Jump Host`` でブラウザを起動し、 ``http://elk:5601`` を開いてください。
 
 ``ELK`` > ``Discover`` > ``waf-logs-*`` を開きます。
 
@@ -947,7 +946,7 @@ WAFを設定を確認します
    .. image:: ./media/chrome-setusername-nonalphanum.jpg
        :width: 400
 
-ログを確認します。
+ログを確認します。 ``Jump Host`` でブラウザを起動し、 ``http://elk:5601`` を開いてください。
 
 ``ELK`` > ``Discover`` > ``waf-logs-*`` を開きます。
 画面上部の検索窓に ``support_id **画面に表示されたsupport ID**`` と入力し ``Enter`` を押してください。
@@ -976,9 +975,9 @@ WAFのセキュリティポリシーを変更し、設定を反映します
 
    # sudo su
    # cd /etc/nginx/conf.d
-   # cp ~/back-to-basic_plus-security/waf/waf-l1_demo.conf default.conf
-   # cp ~/back-to-basic_plus-security/waf/waf-l1_custom_log_format.json custom_log_format.json
-   cp ~/back-to-basic_plus-security/waf/waf-l7_custom_policy.json custom_policy.json
+   # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_demo.conf default.conf
+   # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_custom_log_format.json custom_log_format.json
+   cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l7_custom_policy.json custom_policy.json
 
 WAFを設定を確認します
 
@@ -986,13 +985,13 @@ WAFを設定を確認します
 
 .. code-block:: cmdin
 
-   diff -u ~/back-to-basic_plus-security/waf/waf-l2_custom_policy.json custom_policy.json
+   diff -u ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l2_custom_policy.json custom_policy.json
 
 .. code-block:: bash
   :caption: 実行結果サンプル
   :linenos:
 
-   --- /root/back-to-basic_plus-security/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
+   --- /root/f5j-nginx-plus-lab2-security-conf/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
    +++ custom_policy.json  2022-04-21 00:49:07.276916732 +0900
    @@ -1,9 +1,30 @@
     {
@@ -1069,7 +1068,7 @@ Curl コマンドを使ってリクエストを送信します。
   </html>
 
 
-ログを確認します。
+ログを確認します。 ``Jump Host`` でブラウザを起動し、 ``http://elk:5601`` を開いてください。
 
 ``ELK`` > ``Discover`` > ``waf-logs-*`` を開きます。
 画面上部の検索窓に ``support_id **画面に表示されたsupport ID**`` と入力し ``Enter`` を押してください。
@@ -1120,9 +1119,9 @@ WAFのセキュリティポリシーを変更し、設定を反映します
 
    # sudo su
    # cd /etc/nginx/conf.d
-   # cp ~/back-to-basic_plus-security/waf/waf-l1_demo.conf default.conf
-   # cp ~/back-to-basic_plus-security/waf/waf-l1_custom_log_format.json custom_log_format.json
-   cp ~/back-to-basic_plus-security/waf/waf-l8_custom_policy.json custom_policy.json
+   # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_demo.conf default.conf
+   # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_custom_log_format.json custom_log_format.json
+   cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l8_custom_policy.json custom_policy.json
 
 WAFを設定を確認します
 
@@ -1130,13 +1129,13 @@ WAFを設定を確認します
 
 .. code-block:: cmdin
 
-   diff -u ~/back-to-basic_plus-security/waf/waf-l2_custom_policy.json custom_policy.json
+   diff -u ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l2_custom_policy.json custom_policy.json
 
 .. code-block:: bash
   :caption: 実行結果サンプル
   :linenos:
 
-   --- /root/back-to-basic_plus-security/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
+   --- /root/f5j-nginx-plus-lab2-security-conf/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
    +++ custom_policy.json  2022-04-21 08:38:00.828843367 +0900
    @@ -1,9 +1,16 @@
     {
@@ -1189,7 +1188,7 @@ Curlコマンドではローカルホストへアクセスしており、正常�
        :width: 400
 
 
-ログを確認します。
+ログを確認します。 ``Jump Host`` でブラウザを起動し、 ``http://elk:5601`` を開いてください。
 
 ``ELK`` > ``Discover`` > ``waf-logs-*`` を開きます。
 
@@ -1219,7 +1218,7 @@ OWASP Juice Shopではアカウントの登録が可能です。ログインい�
 
 動作確認の為、 ``OWASP Juice SHop`` に新規アカウントを登録します。
 
-``Jump Host`` より ``Owasp Juice Shop`` にアクセスします。
+``Jump Host`` より ``Owasp Juice Shop`` にアクセスします。ブラウザを起動し、 ``http://juice-shop`` を開いてください
 
 画面右上 ``Account`` > ``Login`` をクリックします。
 すでに別のアカウントでログインしている場合、一度ログアウトをしてください。
