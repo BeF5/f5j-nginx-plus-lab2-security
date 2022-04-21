@@ -125,7 +125,7 @@ ELKの実行
 
 .. code-block:: cmdin
 
-   docker exec -it f5-waf-elk-dashboards_elasticsearch_1 /bin/bash
+   docker exec -it f5wafelkdashboards_elasticsearch_1 /bin/bash
    
    root@3b5bb60d2d35:/#
 
@@ -213,7 +213,7 @@ App Protect WAF のDashboardをImport
 
 .. code-block:: cmdin
 
-   docker exec -it f5-waf-elk-dashboards_elasticsearch_1 /bin/bash
+   docker exec -it f5wafelkdashboards_elasticsearch_1 /bin/bash
 
 logstashを起動
 
@@ -242,9 +242,16 @@ logstashを起動
 
    ELKは起動に時間がかかります。以下のコマンドを実行し想定した結果となることを確認します。
 
+コンテナから抜けます
+
+.. code-block:: cmdin   
+
+   # コンテナのbashから抜ける
+   root@3b5bb60d2d35:/# exit
+
 .. code-block:: cmdin
       
-   docker exec -it  $(docker ps -a -f name=f5-waf-elk-dashboards_elasticsearch_1  -q) ps -aef
+   docker exec -it  $(docker ps -a -f name=f5wafelkdashboards_elasticsearch_1  -q) ps -aef
 
 .. code-block:: bash
   :caption: 実行結果サンプル
@@ -262,7 +269,7 @@ logstashを起動
 
 .. code-block:: cmdin
 
-   docker logs  $(docker ps -a -f name=f5-waf-elk-dashboards_elasticsearch_1  -q)| grep running
+   docker logs  $(docker ps -a -f name=f5wafelkdashboards_elasticsearch_1  -q)| grep running
 
 .. code-block:: bash
   :caption: 実行結果サンプル
@@ -298,7 +305,7 @@ Dockerを動作させ、以下コマンドでOWASP Juice Shopを ``80`` で待�
 
    # OWASP Juice-shop を実行してください。初回はDocker Imageの取得のため起動に少し時間がかかります
 
-   $ docker run -d --name juice-shop -p 80:3000 bkimminich/juice-shop 
+   $ docker run -d --restart=always --name juice-shop -p 80:3000 bkimminich/juice-shop 
    8b69c6f97763b7c08e4afde42942c046dcab400743d756fc36a833d7bb8fa507
    
    # 正しく起動していることを確認してください
