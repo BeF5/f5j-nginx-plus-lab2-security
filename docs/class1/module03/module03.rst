@@ -35,7 +35,7 @@ WAFを設定します
    cp ~/back-to-basic_plus-security/waf/waf-l1_custom_policy.json custom_policy.json
 
 
-WAFを設定を確認します
+WAFの設定を確認します
 
 設定ファイルを確認します。 ``listen 80`` の server block にて各種WAFの設定を読み込んでいます。
 
@@ -44,7 +44,9 @@ WAFを設定を確認します
   cat default.conf
 
 .. code-block:: bash
+  :linenos:
   :caption: 実行結果サンプル
+  :emphasize-lines: 7-10, 63
 
   upstream server_group {
       zone backend 64k;
@@ -81,6 +83,7 @@ WAFを設定を確認します
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
 
   {
@@ -104,7 +107,8 @@ WAFを設定を確認します
 
 .. code-block:: bash
   :caption: 実行結果サンプル
-
+  :linenos:
+  :emphasize-lines: 8
 
   {
       "policy":
@@ -154,10 +158,10 @@ WAFを設定を確認します
 
 左上メニューを開き ``Discover`` をクリックしてください
 
-   .. image:: ./media/elk-menu.jpg
+ -  .. image:: ./media/elk-menu.jpg
        :width: 400
 
-   .. image:: ./media/elk-menu2.jpg
+ -  .. image:: ./media/elk-menu2.jpg
        :width: 200
 
 表示された画面の `+ Add filter` の下にすでに登録されている ``waf-logs-*`` を選択してください
@@ -889,7 +893,7 @@ WAFを設定を確認します
 
   nginx -s reload
 
-2. 動作確認
+3. 動作確認
 ----
 
 1. 長い名前の入力
