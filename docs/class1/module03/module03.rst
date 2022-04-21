@@ -46,7 +46,7 @@ WAFの設定を確認します
 .. code-block:: bash
   :linenos:
   :caption: 実行結果サンプル
-  :emphasize-lines: 7-10, 63
+  :emphasize-lines: 7-10, 13
 
   upstream server_group {
       zone backend 64k;
@@ -145,13 +145,17 @@ WAFの設定を確認します
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
   <title>OWASP Juice Shop</title>
 
 
 この通信の結果をELKで取得していることを確認します
 
-ラボの 構成全体の画面を開き、 ``ELK`` を開いてください
+``Jump Host`` より ``ELK`` を開いてください
+
+.. NOTE::
+   クライアント端末のブラウザより、以下の手順で接続いただくことも可能です
 
    .. image:: ./media/udf_docker_elk.jpg
        :width: 200
@@ -214,6 +218,7 @@ WAFを設定を確認します
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
    --- /root/back-to-basic_plus-security/waf/waf-l1_custom_policy.json     2022-04-14 23:27:19.383236359 +0900
    +++ custom_policy.json  2022-04-14 23:21:06.978541812 +0900
@@ -250,6 +255,7 @@ WAFを設定を確認します
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
   <html>
       <head>
@@ -342,7 +348,7 @@ Overviewと同様に結果はシンプルです。
 2. ブラウザから攻撃の実施
 ----
 
-セキュリティポリシーの設定は `2. 通信のブロック <>`__ を利用します
+セキュリティポリシーの設定は `2. 通信のブロック <https://f5j-nginx-plus-lab2-security.readthedocs.io/en/latest/class1/module03/module03.html#id3>`__ のポリシーを利用します
 
 ``Jump Host`` より ``Owasp Juice Shop`` にアクセスします
 
@@ -421,6 +427,7 @@ WAFを設定を確認します
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
    --- /root/back-to-basic_plus-security/waf/waf-l2_custom_policy.json     2022-04-14 23:27:46.608110394 +0900
    +++ custom_policy.json  2022-04-19 16:53:25.046672699 +0900
@@ -566,6 +573,7 @@ WAFを設定を確認します
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
    --- /root/back-to-basic_plus-security/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
    +++ custom_policy.json  2022-04-20 14:07:56.299902065 +0900
@@ -666,6 +674,7 @@ WAFを設定を確認します
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
    --- /root/back-to-basic_plus-security/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
    +++ custom_policy.json  2022-04-20 17:24:28.367618648 +0900
@@ -707,6 +716,7 @@ Curl コマンドを使ってリクエストを送信します。 ``mypass`` と
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
   <title>OWASP Juice Shop</title>
 
@@ -783,6 +793,7 @@ WAFを設定を確認します
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
    --- /root/back-to-basic_plus-security/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
    +++ custom_policy.json  2022-04-21 00:27:37.705482111 +0900
@@ -971,6 +982,7 @@ WAFを設定を確認します
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
    --- /root/back-to-basic_plus-security/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
    +++ custom_policy.json  2022-04-21 00:49:07.276916732 +0900
@@ -1036,6 +1048,7 @@ Curl コマンドを使ってリクエストを送信します。
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
   <html>
       <head>
@@ -1113,6 +1126,7 @@ WAFを設定を確認します
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
    --- /root/back-to-basic_plus-security/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
    +++ custom_policy.json  2022-04-21 08:38:00.828843367 +0900
@@ -1155,6 +1169,7 @@ Curl コマンドを使ってリクエストを送信します。
 
 .. code-block:: bash
   :caption: 実行結果サンプル
+  :linenos:
 
   <title>OWASP Juice Shop</title>
 
