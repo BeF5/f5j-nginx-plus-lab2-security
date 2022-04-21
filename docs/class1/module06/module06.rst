@@ -289,17 +289,17 @@ Dockerを動作させ、以下コマンドでOWASP Juice Shopを ``80`` で待�
 
    # OWASP Juice-shop を実行してください。初回はDocker Imageの取得のため起動に少し時間がかかります
 
-   $ docker run -d --name dcs-juice-shop -p 80:3000 bkimminich/juice-shop 
+   $ docker run -d --name juice-shop -p 80:3000 bkimminich/juice-shop 
    8b69c6f97763b7c08e4afde42942c046dcab400743d756fc36a833d7bb8fa507
    
    # 正しく起動していることを確認してください
 
    $ docker ps
    CONTAINER ID   IMAGE                   COMMAND                  CREATED         STATUS         PORTS                                   NAMES
-   8b69c6f97763   bkimminich/juice-shop   "docker-entrypoint.s…"   3 seconds ago   Up 2 seconds   0.0.0.0:80->3000/tcp, :::80->3000/tcp   dcs-juice-shop
+   8b69c6f97763   bkimminich/juice-shop   "docker-entrypoint.s…"   3 seconds ago   Up 2 seconds   0.0.0.0:80->3000/tcp, :::80->3000/tcp   juice-shop
 
    # 利用が完了しましたら、対象のDocker Containerを停止してください
-   $ docker stop $(docker ps -a -f name=dcs-juice-shop  -q)
-   $ docker rm $(docker ps -a -f name=dcs-juice-shop  -q)
+   $ docker stop $(docker ps -a -f name=juice-shop  -q)
+   $ docker rm $(docker ps -a -f name=juice-shop  -q)
 
 

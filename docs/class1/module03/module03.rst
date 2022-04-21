@@ -160,7 +160,7 @@ NAP WAFでは、WAFののセキュリティポリシーをJSONファイルで指
    .. image:: ./media/elk-menu2.jpg
        :width: 200
 
-表示された画面の `+ Add filter` の下にすでに登録されている ``waf-logs-*`` を選択肢てください
+表示された画面の `+ Add filter` の下にすでに登録されている ``waf-logs-*`` を選択してください
 
    .. image:: ./media/elk-discover-waf.jpg
        :width: 400
@@ -172,7 +172,7 @@ NAP WAFでは、WAFののセキュリティポリシーをJSONファイルで指
        :width: 400
 
 表示されたログの詳細を一つ確認してみましょう。
-当該のログの左側 ``∨`` をクリックすると詳細が表示されます。参考に内容を確認すると ``bot_signature_name`` に ``curl`` と表示されていることがわかります。
+当該のログの左側 ``>`` をクリックすると詳細が表示されます。参考に内容を確認すると ``bot_signature_name`` に ``curl`` と表示されていることがわかります。
 
    .. image:: ./media/elk-l1-discover.jpg
        :width: 400
@@ -180,7 +180,7 @@ NAP WAFでは、WAFののセキュリティポリシーをJSONファイルで指
 通信は確認した通り許可されておりますが、Curlコマンドを利用した通信が到達していることが確認できます。
 
 
-2. 通信のブロック(enforcementMode)
+2. 通信のブロック
 ====
 
 
@@ -198,7 +198,7 @@ NAP WAFでは、WAFののセキュリティポリシーをJSONファイルで指
    # cd /etc/nginx/conf.d
    # cp ~/back-to-basic_plus-security/waf/waf-l1_demo.conf default.conf
    # cp ~/back-to-basic_plus-security/waf/waf-l1_custom_log_format.json custom_log_format.json
-   cp ~/back-to-basic_plus-security/waf/waf-l2_custom_policy.jsonn custom_policy.json
+   cp ~/back-to-basic_plus-security/waf/waf-l2_custom_policy.json custom_policy.json
 
 WAFを設定を確認します
 
@@ -213,8 +213,12 @@ WAFを設定を確認します
 
    --- /root/back-to-basic_plus-security/waf/waf-l1_custom_policy.json     2022-04-14 23:27:19.383236359 +0900
    +++ custom_policy.json  2022-04-14 23:21:06.978541812 +0900
-   @@ -4,6 +4,6 @@
-            "name": "policy-acceptall",
+   @@ -1,9 +1,9 @@
+    {
+        "policy":
+        {
+   -        "name": "acceptall",
+   +        "name": "blocking",
             "template": { "name": "POLICY_TEMPLATE_NGINX_BASE" },
             "applicationLanguage": "utf-8",
    -        "enforcementMode": "transparent"
@@ -224,7 +228,6 @@ WAFを設定を確認します
 
 ``enforcementMode`` で ``blocking`` と指定されていることがわかります。
 この設定により通信をブロックすることが可能です。
-
 
 プロセスを再起動し、設定を反映します
 
@@ -260,7 +263,7 @@ WAFを設定を確認します
 
 それではログの情報を確認します。
 
-``ELK`` > ``Discover`` > ``waf-logs-*`` を開き、表示された結果の ``∨`` をクリックし、詳細を表示してください。
+``ELK`` > ``Discover`` > ``waf-logs-*`` を開き、表示された結果の ``>`` をクリックし、詳細を表示してください。
 
    .. image:: ./media/elk-l2-discover.jpg
        :width: 400
@@ -319,28 +322,143 @@ Overviewと同様に結果はシンプルです。
 誤検知と判定された場合には、対象Signatureを除外設定にするなどの対処をセキュリティポリシーに対して実施することとなります。
 
 
-参考の情報ですが、curlコマンドの `?a=<script>`` を `?a='or+1=1--` などの文字列に入れ替えると、SQL Injectionのブロックを見ることができますのでご確認ください。
-
-a
-==================================================================
-1. WAFの設定をデプロイ
+3. 特定Signatureの除外設定
 ====
 
-1. 設定
-----
-2. 動作確認
+1. シナリオ
 ----
 
+この項目のシナリオは以下となります。
+1. バックエンドのアプリケーションの動作確認のため、 ``SQL Injection`` がどの様に制御されるか確認する
+2. アプリケーションの前段にWAFが配置されているため、一次的にWAFで ``SQL Injection`` を検知しないように変更する
 
-WAFを設定します
+本来こういったシナリオは多くないかもしれません。WAFのオペレーションの流れとしてご認識ください。
+
+2. ブラウザから攻撃の実施
+----
+
+セキュリティポリシーの設定は `2. 通信のブロック <>`__ を利用します
+
+``Jump Host`` より ``Owasp Juice Shop`` にアクセスします
+
+画面右上 ``Account`` > ``Login`` をクリックします。
+すでに別のアカウントでログインしている場合、一度ログアウトをしてからこの作業を行ってください。
+
+   .. image:: ./media/owasp-js-login-injection.jpg
+       :width: 400
+
+表示された画面に以下の内容を入力します。
+詳細を確認される場合、開発者ツールの ``Network`` を表示してください。
+
++----------+--------------------------+
+| Email    | ' or 1=1--               |
+| Password | * (どの文字でも良いです) |
++----------+--------------------------+
+
+上記のログイン内容は、 ``SQL Injection`` を意図した入力となります。WAFが有効でない場合、認証が回避されログインが完了してしまいます。
+(余裕がある方は、WAFのポリシーを transparent に変更し、動作を確認してみてください)
+
+Webページ側で期待した応答と異なるため、 ``[object Object]`` というエラーとなり、ブロックされています。
+
+   .. image:: ./media/owasp-js-login-injection-block.jpg
+       :width: 400
+
+開発者ツールの ``Network`` を開き、検索ボックスに ``location`` を入力してください。
+下のリクエストの ``login`` を選択し、 ``Response`` を確認すると、NAP WAFが応答した情報が返されていることがわかります。
+
+それではログの情報を確認します。
+
+``ELK`` > ``Discover`` > ``waf-logs-*`` を開きます。
+画面上部の検索窓に ``SQL`` と入力し ``Enter`` を押してください
+
+表示された結果の ``>`` をクリックし、詳細を表示してください。
+
+   .. image:: ./media/elk-overview-sqli-signatureids.jpg
+       :width: 400
+
+内容を確認すると、 ``SQL Injection`` として検知され通信がブロックされたことがわかります。
+
+次に画面で ``sig_ids`` を検索し、右側に表示されている内容をご確認ください
+
+.. code-block:: bash
+  :caption: 表示結果例
+
+  200002147, 200002419, 200002883, 200002476, 200015112
+
+後ほどURL Pathの情報も利用いたしますので ``uri`` の欄に表示される内容をご確認ください
+
+.. code-block:: bash
+  :caption: 表示結果例
+
+  /rest/user/login
+
+3. 設定
+----
+
+SQL Injection を許可する設定を行います。
+WAFのセキュリティポリシーを変更し、設定を反映します
 
 .. code-block:: cmdin
 
-  cat default.conf
+   # sudo su
+   # cd /etc/nginx/conf.d
+   # cp ~/back-to-basic_plus-security/waf/waf-l1_demo.conf default.conf
+   # cp ~/back-to-basic_plus-security/waf/waf-l1_custom_log_format.json custom_log_format.json
+   cp ~/back-to-basic_plus-security/waf/waf-l3_custom_policy.json custom_policy.json
+
+WAFを設定を確認します
+
+今回確認するポリシーについて前回の内容との差分を確認します。
+
+.. code-block:: cmdin
+
+   diff -u ~/back-to-basic_plus-security/waf/waf-l2_custom_policy.json custom_policy.json
 
 .. code-block:: bash
   :caption: 実行結果サンプル
 
+   --- /root/back-to-basic_plus-security/waf/waf-l2_custom_policy.json     2022-04-14 23:27:46.608110394 +0900
+   +++ custom_policy.json  2022-04-19 16:53:25.046672699 +0900
+   @@ -1,9 +1,31 @@
+    {
+        "policy":
+        {
+   -        "name": "blocking",
+   +        "name": "disable-sqli-signatures",
+            "template": { "name": "POLICY_TEMPLATE_NGINX_BASE" },
+            "applicationLanguage": "utf-8",
+   -        "enforcementMode": "blocking"
+   +        "enforcementMode": "blocking",
+   +       "signatures": [
+   +           {
+   +                "signatureId": 200002147,
+   +                "enabled": false
+   +           },
+   +           {
+   +                "signatureId": 200002419,
+   +                "enabled": false
+   +           },
+   +           {
+   +                "signatureId": 200002883,
+   +                "enabled": false
+   +           },
+   +           {
+   +                "signatureId": 200002476,
+   +                "enabled": false
+   +           },
+   +           {
+   +                "signatureId": 200015112,
+   +                "enabled": false
+   +           }
+   +       ]
+        }
+    }
+
+
+``signatures`` に 先程確認した各Signatureが、 ``"enabled": false`` と指定されていることがわかります。
+表示されている ``signatureID`` が先程画面で確認した内容と一致していることを確認してください。
+
+この設定により通信をブロックすることが可能です。
 
 プロセスを再起動し、設定を反映します
 
@@ -348,13 +466,752 @@ WAFを設定します
 
   nginx -s reload
 
+4. 動作確認
+----
+
+``Jump Host`` より ``Owasp Juice Shop`` にアクセスします
+
+画面右上 ``Account`` > ``Login`` をクリックします。
+すでに別のアカウントでログインしている場合、一度ログアウトをしてからこの作業を行ってください。
+
+   .. image:: ./media/owasp-js-login-injection.jpg
+       :width: 400
+
+表示された画面に以下の内容を入力します。
+
++----------+------------------------------+
+| Email    | ``' or 1=1--``               |
+| Password | ``*`` (どの文字でも良いです) |
++----------+------------------------------+
+
+ログインが完了し、TOPページが表示されました。画面右上 ``Account`` をクリックすると、 ``SQL Injection`` により認証を回避し、 ``admin@...`` でログインできていることが確認できます。
+（SQL Injection の攻撃が成功した状態です）
+
+   .. image:: ./media/owasp-js-login-injection-successed.jpg
+       :width: 400
+
+.. NOTE::
+    | このサーバはセキュリティハックのトレーニング用のアプリケーションとなります。
+    | 様々な操作が、セキュリティに関する操作に該当する場合があり、POP Upで得点を獲得した
+    | 情報が表示されますが無視してください
+
+    .. image:: ./media/dcs-js-popup.jpg
+       :width: 400
 
 
+それではログの情報を確認します。
+
+``ELK`` > ``Discover`` > ``waf-logs-*`` を開きます。
+画面上部の検索窓に ``SQL`` と入力し ``Enter`` を押してください
+
+   .. image:: ./media/owasp-js-login-injection.jpg
+       :width: 400
+
+ログを検索いただくと、直前に接続した内容は ``SQL Injection`` としての表示が無いかと思います。
+
+   .. image:: ./media/elk-overview-exclude-sqli.jpg
+       :width: 400
+
+次に先程確認したURLを検索箇所に入力して状態を確認します。
+画面上部の ``+Add filter`` をクリックし、画面に表示される項目に以下の内容を入力し　``Save`` をクリックしてください。
+
++---------+----------------------+
+|Field    | ``uri``              |
+|Operator | ``is``               |
+|Vsalue   | ``/rest/user/login`` |
++---------+----------------------+
+
+表示された結果の ``>`` をクリックし、詳細を表示してください。
+
+   .. image:: ./media/elk-overview-exclude-sqli2.jpg
+       :width: 400
+
+表示結果を確認すると、uri として該当するログであることがわかります。また ``outcome`` が ``PASSED`` となり許可されていること、 ``sig_ids`` は ``該当なし(N/A)`` であることが確認できます。
+
+4. Custom Blocking Page
+====
+
+先程SQL InjectionをWAFでBlockしたさい、SPA(Sinagle Page Application) である ``OWASP Juice Shop`` では内容の推察ができない内容となっていました。
+Blockの際に表示される情報を変更し、利用者にとってわかりやすくなるように設定をします
+
+1. 設定
+----
+
+Custom Block Pageの設定を行います。
+WAFのセキュリティポリシーを変更し、設定を反映します
 
 .. code-block:: cmdin
+
+   # sudo su
+   # cd /etc/nginx/conf.d
+   # cp ~/back-to-basic_plus-security/waf/waf-l1_demo.conf default.conf
+   # cp ~/back-to-basic_plus-security/waf/waf-l1_custom_log_format.json custom_log_format.json
+   cp ~/back-to-basic_plus-security/waf/waf-l4_custom_policy.json custom_policy.json
+
+WAFを設定を確認します
+
+今回確認するポリシーについて前回の内容との差分を確認します。
+
+.. code-block:: cmdin
+
+   diff -u ~/back-to-basic_plus-security/waf/waf-l2_custom_policy.json custom_policy.json
 
 .. code-block:: bash
   :caption: 実行結果サンプル
 
-b
-==================================================================
+   --- /root/back-to-basic_plus-security/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
+   +++ custom_policy.json  2022-04-20 14:07:56.299902065 +0900
+   @@ -1,9 +1,17 @@
+    {
+        "policy":
+        {
+   -        "name": "blocking",
+   +        "name": "custom-blockingpage",
+            "template": { "name": "POLICY_TEMPLATE_NGINX_BASE" },
+            "applicationLanguage": "utf-8",
+   -        "enforcementMode": "blocking"
+   +        "enforcementMode": "blocking",
+   +        "response-pages": [
+   +            {
+   +                "responseContent": "Attack is detected ID: <%TS.request.ID()%>",
+   +                "responseHeader": "HTTP/1.1 401 UnauthorizedK\r\nCache-Control: no-cache\r\nPragma: no-cache\r\nConnection: close",
+   +                "responseActionType": "custom",
+   +                "responsePageType": "default"
+   +            }
+   +        ]
+        }
+    }
+
+
+``response-pages`` に Custom Pageを指定しています。
+``responseContent`` Block時の応答を HTML で記述することが可能です。
+今回のアプリケーションに合わせ、 ``responseContent`` 、 ``responseHeader`` を指定しています。
+
+プロセスを再起動し、設定を反映します
+
+.. code-block:: cmdin
+
+  nginx -s reload
+
+2. 動作確認
+----
+
+``Jump Host`` より ``Owasp Juice Shop`` にアクセスします
+
+画面右上 ``Account`` > ``Login`` をクリックします。
+すでに別のアカウントでログインしている場合、一度ログアウトをしてからこの作業を行ってください。
+
+   .. image:: ./media/owasp-js-login-injection.jpg
+       :width: 400
+
+表示された画面に以下の内容を入力します。
+
++----------+--------------------------+
+| Email    | ' or 1=1--               |
+| Password | * (どの文字でも良いです) |
++----------+--------------------------+
+
+エラーでブロックされるため、ログインは行われません。
+画面には赤文字で ``Attack is detected ID: **support ID**`` が表示されており、セキュリティポリシーで指定した内容となっていることが確認できます。
+
+   .. image:: ./media/owasp-js-login-custom-blockpage.jpg
+       :width: 400
+
+ログを確認すると、 ``SQL Injeciton`` の動作確認と同様の内容が確認できます。
+
+``ELK`` > ``Discover`` > ``waf-logs-*`` を開きます。
+画面上部の検索窓に ``SQL`` と入力し ``Enter`` を押してください。
+``SQL Injection`` として検知され通信がブロックされたことがわかります。
+
+   .. image:: ./media/elk-overview-sqli-custom-blockpage.jpg
+       :width: 400
+
+
+5. Sensitive Parameter
+====
+
+アプリケーションとの通信で重要なデータを取り扱う場合があります。
+それらの情報を扱うパラメータを ``sensitive parameter`` に指定することでログやリクエストで情報をマスクすることが可能です
+
+1. 設定
+----
+
+sensitive parameterの設定を行います。
+WAFのセキュリティポリシーを変更し、設定を反映します
+
+.. code-block:: cmdin
+
+   # sudo su
+   # cd /etc/nginx/conf.d
+   # cp ~/back-to-basic_plus-security/waf/waf-l1_demo.conf default.conf
+   # cp ~/back-to-basic_plus-security/waf/waf-l1_custom_log_format.json custom_log_format.json
+   cp ~/back-to-basic_plus-security/waf/waf-l5_custom_policy.json custom_policy.json
+
+WAFを設定を確認します
+
+今回確認するポリシーについて前回の内容との差分を確認します。
+
+.. code-block:: cmdin
+
+   diff -u ~/back-to-basic_plus-security/waf/waf-l2_custom_policy.json custom_policy.json
+
+.. code-block:: bash
+  :caption: 実行結果サンプル
+
+   --- /root/back-to-basic_plus-security/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
+   +++ custom_policy.json  2022-04-20 17:24:28.367618648 +0900
+   @@ -1,9 +1,14 @@
+    {
+        "policy":
+        {
+   -        "name": "blocking",
+   +        "name": "sensitive-parameter",
+            "template": { "name": "POLICY_TEMPLATE_NGINX_BASE" },
+            "applicationLanguage": "utf-8",
+   -        "enforcementMode": "blocking"
+   +        "enforcementMode": "blocking",
+   +        "sensitive-parameters": [
+   +            {
+   +                "name": "mypass"
+   +            }
+   +        ]
+        }
+    }
+
+
+``sensitive-parameter`` として ``mypass`` を指定しています。指定のパラメータについては情報がマスクされます
+
+プロセスを再起動し、設定を反映します
+
+.. code-block:: cmdin
+
+  nginx -s reload
+
+2. 動作確認
+----
+
+Curl コマンドを使ってリクエストを送信します。 ``mypass`` というパラメータに対し、 ``dummy`` という値を指定しています。
+
+.. code-block:: cmdin
+
+  curl -s "localhost/?mypass=dummy" | grep title
+
+.. code-block:: bash
+  :caption: 実行結果サンプル
+
+  <title>OWASP Juice Shop</title>
+
+通信はエラーなく終了しました。
+ログを確認します。
+
+``ELK`` > ``Discover`` > ``waf-logs-*`` を開きます。
+画面上部の検索窓に ``mypass`` と入力し ``Enter`` を押してください。
+
+   .. image:: ./media/elk-discover-mypass.jpg
+       :width: 400
+
+該当の通信が表示されています。通信の詳細を確認すると ``request`` でURIの情報が確認でき、
+パラメータとして指定した ``mypass`` の値がマスクされていることがわかります。
+
+この様に、sensitive-parameter を利用することで、対象の値をマスクすることが可能です。
+
+
+6. 特定パラメータの制御
+====
+
+Sensitive Parameterの他、NAP WAFではより詳細な制御をすることが可能です。
+
+1. 事前動作確認
+----
+
+`Tips1. アカウントの登録 <>`__ の手順に従ってテスト用アカウントを作成してください。
+
+作成後、画面右上 ``Account`` > ``test@example.com(作成したユーザのメールアドレス)`` をクリックし、 ``User Profile`` を開いてください。
+ここではユーザの名称や、ユーザのアイコンとなる画像をアップロードすることが可能です。
+
+ブラウザの右上 ``︙`` > ``More tools`` > ``Developer tools`` を開きます。
+表示された ``Developer tools`` の ``Network`` タブを開き、通信の状況を取得します。
+
+   .. image:: ./media/chrome-developer-tool.jpg
+       :width: 400
+
+| ``Username`` に ``dummyname`` を入力し、 ``Set Username`` をクリックし、動作を確認してください。
+| ``Developer tools`` の検索窓に ``profile`` と入力し、 ``Status`` が ``30x`` の行をクリックしてください
+
+   .. image:: ./media/chrome-setusername.jpg
+       :width: 400
+
+``Payload`` のタブを開くと、Form Data で ``username: dummyname`` が送付されていることが確認できます。
+このUsername欄は、様々な特殊文字など自由に入力することが可能です。入力値を意図した様に制御するようWAFのポリシーを設定します。
+
+2. 設定
+----
+
+Parameterの設定を行います。
+WAFのセキュリティポリシーを変更し、設定を反映します
+
+Parameterのセキュリティポリシーは様々なVIOLATIONが関係します。
+制御の内容に応じてVIOLATIONを有効にする場合がありますので、サンプルをよく確認して設定してください
+- 設定サンプル: `User-Defined Parameters <https://docs.nginx.com/nginx-app-protect/configuration-guide/configuration/#user-defined-parameters>`__
+- VIOLATIONの意味: `Supported Violations <https://docs.nginx.com/nginx-app-protect/configuration-guide/configuration/#supported-violations>`__
+
+.. code-block:: cmdin
+
+   # sudo su
+   # cd /etc/nginx/conf.d
+   # cp ~/back-to-basic_plus-security/waf/waf-l1_demo.conf default.conf
+   # cp ~/back-to-basic_plus-security/waf/waf-l1_custom_log_format.json custom_log_format.json
+   cp ~/back-to-basic_plus-security/waf/waf-l6_custom_policy.json custom_policy.json
+
+WAFを設定を確認します
+
+今回確認するポリシーについて前回の内容との差分を確認します。
+
+.. code-block:: cmdin
+
+   diff -u ~/back-to-basic_plus-security/waf/waf-l2_custom_policy.json custom_policy.json
+
+.. code-block:: bash
+  :caption: 実行結果サンプル
+
+   --- /root/back-to-basic_plus-security/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
+   +++ custom_policy.json  2022-04-21 00:27:37.705482111 +0900
+   @@ -1,9 +1,93 @@
+    {
+        "policy":
+        {
+   -        "name": "blocking",
+   +        "name": "parameter",
+            "template": { "name": "POLICY_TEMPLATE_NGINX_BASE" },
+            "applicationLanguage": "utf-8",
+   -        "enforcementMode": "blocking"
+   +        "enforcementMode": "blocking",
+   +       "blocking-settings": {
+   +           "violations": [
+   +               {
+   +                   "name": "VIOL_PARAMETER_STATIC_VALUE",
+   +                   "alarm": true,
+   +                   "block": true
+   +               },
+   +               {
+   +                   "name": "VIOL_PARAMETER_VALUE_LENGTH",
+   +                   "alarm": true,
+   +                   "block": true
+   +               },
+   +               {
+   +                   "name": "VIOL_PARAMETER_NUMERIC_VALUE",
+   +                   "alarm": true,
+   +                   "block": true
+   +               },
+   +               {
+   +                   "name": "VIOL_PARAMETER_DATA_TYPE",
+   +                   "alarm": true,
+   +                   "block": true
+   +               },
+   +               {
+   +                   "name": "VIOL_PARAMETER_VALUE_METACHAR",
+   +                   "alarm": true,
+   +                   "block": true
+   +               },
+   +               {
+   +                   "name": "VIOL_PARAMETER_NAME_METACHAR",
+   +                   "alarm": true,
+   +                   "block": true
+   +               },
+   +               {
+   +                   "name": "VIOL_PARAMETER_VALUE_BASE64",
+   +                   "alarm": true,
+   +                   "block": true
+   +               },
+   +               {
+   +                   "name": "VIOL_PARAMETER",
+   +                   "alarm": true,
+   +                   "block": true
+   +               },
+   +               {
+   +                   "name": "VIOL_PARAMETER_MULTIPART_NULL_VALUE",
+   +                   "alarm": true,
+   +                   "block": true
+   +               },
+   +               {
+   +                   "name": "VIOL_PARAMETER_LOCATION",
+   +                   "alarm": true,
+   +                   "block": true
+   +               }
+   +            ]
+   +        },
+   +        "parameters": [
+   +            {
+   +                "name": "username",
+   +                "type": "explicit",
+   +                "valueType": "user-input",
+   +               "dataType": "alpha-numeric",
+   +               "decodeValueAsBase64": "required",
+   +                "parameterLocation": "form-data",
+   +               "checkMaxValueLength": true,
+   +               "checkMinValueLength": true,
+   +               "maximumLength": 5,
+   +               "minimumLength": 0,
+   +                "urls": [
+   +                    {
+   +                        "method": "*",
+   +                        "name": "/profile",
+   +                        "type": "explicit",
+   +                        "wildcardOrder": 1
+   +                    }
+   +               ]
+   +            }
+   +        ],
+   +       "response-pages": [
+   +            {
+   +                "responseContent": "Attack is detected ID: <%TS.request.ID()%><br>Redirect in 5 sec... <script>setTimeout(function(){location.href='/profile'},5000);</script>",
+   +                "responseHeader": "HTTP/1.1 200",
+   +                "responseActionType": "custom",
+   +                "responsePageType": "default"
+   +            }
+   +        ]
+        }
+    }
+
+- ``blocking-settings`` の ``violations`` で、パラメータ制御に関連する VIOLATION を有効にしています
+- ``parameters`` でパラメータ制御の設定をしています。今回対象となるパラメータは ``username`` で ``最大文字数(maximumLength)`` 、 入力値を ``アルファベットと数字(dataType)`` を指定しています。
+- ``response-pages`` で エラーページを指定します。条件で拒否対象と判定された場合、自動的にリダイレクトするようにしています。
+
+プロセスを再起動し、設定を反映します
+
+.. code-block:: cmdin
+
+  nginx -s reload
+
+2. 動作確認
+----
+
+1. 長い名前の入力
+
+``Username`` に ``longname`` を入力します。
+エラーページは5秒のみの表示となりますので、Support ID を取得する場合には注意ください。
+
+   .. image:: ./media/chrome-setusername-longname.jpg
+       :width: 400
+
+ログを確認します。
+
+``ELK`` > ``Discover`` > ``waf-logs-*`` を開きます。
+画面上部の検索窓に ``support_id **画面に表示されたsupport ID**`` と入力し ``Enter`` を押してください。
+
+   .. image:: ./media/elk-discover-longname.jpg
+       :width: 400
+
+該当の通信が表示されています。
+ログの内容を確認すると、 ``username`` に ``longname`` が入力され、 ``violations`` に、 ``Illegal parameter value length`` と表示されていることがわかります。
+
+この様に、文字列の長さを指定することで想定外の入力値を制御することが可能です。
+
+
+2. 許可されない文字の入力
+
+``Username`` に 許可されない文字列 ``a@!b`` を入力します。
+エラーページは5秒のみの表示となりますので、Support ID を取得する場合には注意ください。
+
+   .. image:: ./media/chrome-setusername-nonalphanum.jpg
+       :width: 400
+
+ログを確認します。
+
+``ELK`` > ``Discover`` > ``waf-logs-*`` を開きます。
+画面上部の検索窓に ``support_id **画面に表示されたsupport ID**`` と入力し ``Enter`` を押してください。
+
+   .. image:: ./media/elk-discover-nonalphanum.jpg
+       :width: 400
+
+該当の通信が表示されています。
+ログの内容を確認すると、 ``username`` に ``a@!b`` が入力され、 ``violations`` に、 ``Illegal Base64 value`` と表示されていることがわかります。
+
+この様に、文字列のタイプを指定することで想定外の入力値を制御することが可能です。
+
+
+7. Bot Clientの確認
+====
+
+NAP WAFはBot Signatureを持ち、クライアントが操作するツール以外に、Google等に代表される各サイトをクロールするツールに置いても判定・制御することが可能です。
+
+1. 設定
+----
+
+Botの設定を行います。
+WAFのセキュリティポリシーを変更し、設定を反映します
+
+.. code-block:: cmdin
+
+   # sudo su
+   # cd /etc/nginx/conf.d
+   # cp ~/back-to-basic_plus-security/waf/waf-l1_demo.conf default.conf
+   # cp ~/back-to-basic_plus-security/waf/waf-l1_custom_log_format.json custom_log_format.json
+   cp ~/back-to-basic_plus-security/waf/waf-l7_custom_policy.json custom_policy.json
+
+WAFを設定を確認します
+
+今回確認するポリシーについて前回の内容との差分を確認します。
+
+.. code-block:: cmdin
+
+   diff -u ~/back-to-basic_plus-security/waf/waf-l2_custom_policy.json custom_policy.json
+
+.. code-block:: bash
+  :caption: 実行結果サンプル
+
+   --- /root/back-to-basic_plus-security/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
+   +++ custom_policy.json  2022-04-21 00:49:07.276916732 +0900
+   @@ -1,9 +1,30 @@
+    {
+        "policy":
+        {
+   -        "name": "blocking",
+   +        "name": "bot-signature",
+            "template": { "name": "POLICY_TEMPLATE_NGINX_BASE" },
+            "applicationLanguage": "utf-8",
+   -        "enforcementMode": "blocking"
+   +        "enforcementMode": "blocking",
+   +       "bot-defense": {
+   +            "settings": {
+   +                "isEnabled": true
+   +            },
+   +            "mitigations": {
+   +                "classes": [
+   +                    {
+   +                        "name": "trusted-bot",
+   +                        "action": "alarm"
+   +                    },
+   +                    {
+   +                        "name": "untrusted-bot",
+   +                        "action": "block"
+   +                    },
+   +                    {
+   +                        "name": "malicious-bot",
+   +                        "action": "block"
+   +                    }
+   +                ]
+   +            }
+   +        }
+        }
+    }
+
+
+
+このラボでCurlコマンドによる疎通確認を行っている箇所があります。
+デフォルトのセキュリティポリシーであればCurlコマンドはブロックされず、コンテンツの取得が可能です。
+ただし、Curlはブラウザなどとは異なり ``Untrusted Bot`` というクラスに分類されます。
+
+今回の設定では、 ``Untrusted Bot`` を ``Block`` に変更します。
+
+疎通確認で、 ``Curl`` と ``ブラウザ`` の双方から接続を行い、挙動を確認します
+
+プロセスを再起動し、設定を反映します
+
+.. code-block:: cmdin
+
+  nginx -s reload
+
+2. 動作確認
+----
+
+Curl コマンドを使ってリクエストを送信します。 
+
+.. code-block:: cmdin
+
+  curl -s "localhost/" | grep title
+
+.. code-block:: bash
+  :caption: 実行結果サンプル
+
+  <html>
+      <head>
+        <title>Request Rejected</title>
+      </head>
+      <body>The requested URL was rejected. Please consult with your administrator.<br><br>
+        Your support ID is: 16452723180063667004<br><br>
+        <a href='javascript:history.back();'>[Go Back]</a>
+      </body>
+  </html>
+
+
+ログを確認します。
+
+``ELK`` > ``Discover`` > ``waf-logs-*`` を開きます。
+画面上部の検索窓に ``support_id **画面に表示されたsupport ID**`` と入力し ``Enter`` を押してください。
+
+   .. image:: ./media/elk-discover-botsig.jpg
+       :width: 400
+
+該当の通信が表示されています。
+- ``bot_category`` が ``HTTP Library`` 、 ``bot_signature_name`` が ``curl`` 、 ``client_class`` が ``Untrusted Bot`` となっています
+- ``outcome`` が ``REJECTED`` となっています。このことから通信が拒否されたことがわかります
+- ``violations`` が ``Bot Client Detected`` となっていることから、Botの判定によって通信が拒否されたと判断できます
+
+
+次にブラウザでTopページにアクセスしてください
+
+
+ブラウザの場合、通信はエラーなく終了しました。
+
+ログを確認します。
+画面上部の検索窓に ``client_class Browser`` と入力し ``Enter`` を押してください。
+
+   .. image:: ./media/elk-discover-botsig.jpg
+       :width: 400
+
+ブラウザを通じてアクセスした場合、様々な通信が行われます。
+今回はBotとの比較が主な目的となりますので、適当なログを選択いただければ問題ありません。
+
+- ``bot_***`` に関する項目に情報がなく、 ``N/A`` となっています
+- ``client_application`` が ``Chrome`` 、 ``client_class`` が ``Browser`` となっています
+
+この様に、Curlコマンドとブラウザで接続した場合にはそれぞれ別のクライアントであることが識別されており、
+Bot Signatureを利用することでNAP WAFが持つBot Signatureの機能により通信の制御が可能です
+
+
+8. IPアドレスによる制御
+====
+
+IPアドレスによる制御を行い、NAP WAFの機能で制御を行い、同様にログを確認することができます。
+
+1. 設定
+----
+
+Botの設定を行います。
+WAFのセキュリティポリシーを変更し、設定を反映します
+
+.. code-block:: cmdin
+
+   # sudo su
+   # cd /etc/nginx/conf.d
+   # cp ~/back-to-basic_plus-security/waf/waf-l1_demo.conf default.conf
+   # cp ~/back-to-basic_plus-security/waf/waf-l1_custom_log_format.json custom_log_format.json
+   cp ~/back-to-basic_plus-security/waf/waf-l8_custom_policy.json custom_policy.json
+
+WAFを設定を確認します
+
+今回確認するポリシーについて前回の内容との差分を確認します。
+
+.. code-block:: cmdin
+
+   diff -u ~/back-to-basic_plus-security/waf/waf-l2_custom_policy.json custom_policy.json
+
+.. code-block:: bash
+  :caption: 実行結果サンプル
+
+   --- /root/back-to-basic_plus-security/waf/waf-l2_custom_policy.json     2022-04-20 10:00:50.107946293 +0900
+   +++ custom_policy.json  2022-04-21 08:38:00.828843367 +0900
+   @@ -1,9 +1,16 @@
+    {
+        "policy":
+        {
+   -        "name": "blocking",
+   +        "name": "iplist",
+            "template": { "name": "POLICY_TEMPLATE_NGINX_BASE" },
+            "applicationLanguage": "utf-8",
+   -        "enforcementMode": "blocking"
+   +        "enforcementMode": "blocking",
+   +        "whitelist-ips": [
+   +            {
+   +                "blockRequests": "always",
+   +                "ipAddress": "10.0.0.0",
+   +                "ipMask": "255.0.0.0"
+   +            }
+   +        ]
+        }
+    }
+
+``whitelist-ips`` で許可するIPアドレスを指定しています
+
+プロセスを再起動し、設定を反映します
+
+.. code-block:: cmdin
+
+  nginx -s reload
+
+2. 動作確認
+----
+
+Curl コマンドを使ってリクエストを送信します。 
+
+.. code-block:: cmdin
+
+  curl -s "localhost/" | grep title
+
+.. code-block:: bash
+  :caption: 実行結果サンプル
+
+  <title>OWASP Juice Shop</title>
+
+Curlコマンドではローカルホストへアクセスしており、正常が完了した個をお確認できます。
+
+ブラウザでアクセスします。通信がブロックされました。
+
+   .. image:: ./media/chrome-ips-blocked.jpg
+       :width: 400
+
+
+ログを確認します。
+
+``ELK`` > ``Discover`` > ``waf-logs-*`` を開きます。
+画面上部の検索窓に ``support_id **画面に表示されたsupport ID**`` と入力し ``Enter`` を押してください。
+
+   .. image:: ./media/elk-discover-ips.jpg
+       :width: 400
+
+該当の通信が表示されています。
+- ``ip_client`` が ``10.1.1.4`` となっており設定の内容に該当することがわかります
+- ``outcome`` が ``REJECTED`` となり通信が拒否されています
+- ``violations`` に IPアドレスがリストに含まれていると記載があります
+
+特定のIPアドレスに対して制御することができます
+
+
+Tips1. アカウントの登録
+====
+
+OWASP Juice Shopではアカウントの登録が可能です。ログインいただくと、カートへ商品の追加などの操作をいただくことが可能です。
+
+1. アカウントの登録
+----
+
+動作確認の為、 ``OWASP Juice SHop`` に新規アカウントを登録します。
+
+``Jump Host`` より ``Owasp Juice Shop`` にアクセスします。
+
+画面右上 ``Account`` > ``Login`` をクリックします。
+すでに別のアカウントでログインしている場合、一度ログアウトをしてください。
+
+画面中段 「Not yet a customer?」をクリックし、以下の内容を入力してください。
+
+   .. image:: ./media/owasp-js-new-account.jpg
+       :width: 400
+
++-------------------+------------------------+
+|Email              | ``test@example.com``   |
+|Password           | ``testuser``           |
+|Repeat Password    | ``testuser``           |
+|Security Questions | ``自由に指定下さい``   |
+|Answer             | ``自由に指定下さい``   |
++-------------------+------------------------+
+
+(説明の用途でメールアドレス・パスワードを指定していますがいずれの文字列でも問題ありません)
+
+
+再度表示されますログイン画面に作成したアカウントの情報を入力し、ログインしてください。
+
+   .. image:: ./media/owasp-js-new-account2.jpg
+       :width: 400
+
+アカウント情報を確認すると指定のメールアドレスでログインしたことが確認できます。
+
+   .. image:: ./media/owasp-js-new-account3.jpg
+       :width: 400
+
+
+
+
+
+
+
