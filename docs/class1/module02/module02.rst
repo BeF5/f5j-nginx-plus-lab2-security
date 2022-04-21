@@ -42,7 +42,7 @@ NGINX Plus のインストール
 
 .. code-block:: cmdin
    
-   cat ~/back-to-basic_plus-security/basic/laodmodules.conf /etc/nginx/nginx.conf > /etc/nginx/nginx.conf 
+   cat ~/back-to-basic_plus-security/base/laodmodules.conf /etc/nginx/nginx.conf > /etc/nginx/nginx.conf 
 
 設定内容を確認します
 
