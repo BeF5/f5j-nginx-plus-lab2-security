@@ -44,6 +44,8 @@ NGINX Plus のインストール test
    
    cat ~/back-to-basic_plus-security/basic/laodmodules.conf /etc/nginx/nginx.conf > /etc/nginx/nginx.conf 
 
+設定内容を確認します
+
 .. code-block:: cmdin
    
    head -7  /etc/nginx/nginx.conf
@@ -51,7 +53,8 @@ NGINX Plus のインストール test
 
 .. code-block:: bash
   :caption: 実行結果サンプル
-
+  :linenos:
+  
    # for NAP WAF
    load_module modules/ngx_http_app_protect_module.so;
    # for NAP DoS
