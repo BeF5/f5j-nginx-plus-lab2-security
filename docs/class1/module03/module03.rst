@@ -1305,6 +1305,8 @@ NGINXを再起動し、Signatureが反映されたことを確認します
    2022/04/22 08:18:20 [notice] 8423#8423: APP_PROTECT { "event": "configuration_load_success", "software_version": "3.796.0", "completed_successfully":true,"attack_signatures_package":{"version":"2022.04.10","revision_datetime":"2022-04-10T12:51:45Z"},"threat_campaigns_package":{},"software_version":""}
    2022/04/22 09:27:35 [notice] 8452#8452: APP_PROTECT { "event": "configuration_load_success", "software_version": "3.796.0", "completed_successfully":true,"attack_signatures_package":{"version":"2022.03.15","revision_datetime":"2022-03-15T11:35:54Z"},"threat_campaigns_package":{},"software_version":""}
 
+2行目が該当のログとなります。1行目と比較すること ``attack_signatures_package`` の ``version`` の項目に変更後のVersionが記載されたことがわかります。
+
 10. NAP WAF のアップグレード
 ====
 
@@ -1373,7 +1375,8 @@ Threat Campaign Signatureを確認します。読み込むまでに数分程度�
    2022/04/22 11:12:43 [notice] 8452#8452: APP_PROTECT { "event": "configuration_load_success", "software_version": "3.796.0", "completed_successfully":true,"attack_signatures_package":{"version":"2022.04.10","revision_datetime":"2022-04-10T12:51:45Z"},"threat_campaigns_package":{},"software_version":""}
    2022/04/22 11:16:33 [notice] 8452#8452: APP_PROTECT { "event": "configuration_load_success", "software_version": "3.796.0", "completed_successfully":true,"attack_signatures_package":{"version":"2022.04.10","revision_datetime":"2022-04-10T12:51:45Z"},"threat_campaigns_package":{"version":"2022.04.20","revision_datetime":"2022-04-20T14:14:04Z"},"software_version":""}
 
-``threat_campaigns_package`` の項目にVersionが記載されました。
+2行目が該当のログとなります。1行目と比較すること ``threat_campaigns_package`` の項目にVersionが記載されたことがわかります。
+このように設定することで Threat Campaigns Signature を利用することが可能です。
 
 Tips1. アカウントの登録
 ====
