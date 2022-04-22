@@ -1207,6 +1207,116 @@ Curlコマンドではローカルホストへアクセスしており、正常�
 
 特定のIPアドレスに対して制御することができます
 
+8. Signatureのアップデート
+====
+
+NAP WAFのSignatureは頻繁にアップデートされます。
+Signatureのアップデートはインストール時に確認いただいた通り、各種OSのパッケージ管理コマンドを通じて管理を頂きます。
+
+以下が参考の確認結果です。
+
+.. code-block:: cmdin
+
+   # dpkg-query -l | grep app-protect
+
+   ii  app-protect                        25+3.671.0-1~focal                    amd64        App-Protect package for Nginx Plus, Includes all of the default files and examples. Nginx App Protect provides web application firewall (WAF) security protection for your web applications, including OWASP Top 10 attacks.
+   ii  app-protect-attack-signatures      2021.11.16-1~focal                    amd64        Attack Signature Updates for App-Protect
+   ii  app-protect-common                 8.12.1-1~focal                        amd64        NGINX App Protect
+   ii  app-protect-compiler               8.12.1-1~focal                        amd64        Control-plane(aka CP) for waf-general debian
+   ii  app-protect-dos                    25+2.0.1-1~focal                      amd64        Nginx DoS protection
+   ii  app-protect-engine                 8.12.1-1~focal                        amd64        NGINX App Protect
+   ii  app-protect-plugin                 3.671.0-1~focal                       amd64        NGINX App Protect plugin
+
+このコマンドの出力結果では、Signatureは ``2021/11/16`` のものであることがわかります
+
+インストール可能なパッケージを Ubuntu で確認する方法は以下です。
+
+.. code-block:: cmdin
+
+   # apt list app-protect -a
+   Listing... Done
+   app-protect/stable,now 26+3.796.0-1~focal amd64 [installed]
+   app-protect/stable 26+3.780.1-1~focal amd64
+   app-protect/stable 25+3.760.0-1~focal amd64
+   app-protect/stable 25+3.733.0-1~focal amd64
+   app-protect/stable 25+3.671.0-1~focal amd64
+   app-protect/stable 24+3.639.0-1~focal amd64
+   app-protect/stable 24+3.612.0-1~focal amd64
+   app-protect/stable 24+3.583.0-1~focal amd64
+   app-protect/stable 24+3.512.0-1~focal amd64
+   app-protect/stable 23+3.462.0-1~focal amd64
+   
+   # apt list app-protect-attack-signatures -a
+   Listing... Done
+   app-protect-attack-signatures/stable,now 2022.04.10-1~focal amd64 [installed]
+   app-protect-attack-signatures/stable 2022.03.31-1~focal amd64
+   app-protect-attack-signatures/stable 2022.03.23-1~focal amd64
+   app-protect-attack-signatures/stable 2022.03.15-1~focal amd64
+   app-protect-attack-signatures/stable 2022.03.02-1~focal amd64
+   app-protect-attack-signatures/stable 2022.02.24-1~focal amd64
+   app-protect-attack-signatures/stable 2022.02.15-1~focal amd64
+   app-protect-attack-signatures/stable 2022.02.08-1~focal amd64
+   app-protect-attack-signatures/stable 2022.02.01-1~focal amd64
+   app-protect-attack-signatures/stable 2022.01.25-1~focal amd64
+   app-protect-attack-signatures/stable 2022.01.12-1~focal amd64
+   app-protect-attack-signatures/stable 2022.01.04-1~focal amd64
+   ** 省略 **
+
+| NAP WAFのSignatureは、そのSignatureがリリースした時点にサポートされるNGINX PlusとNAP WAF、そしてその後にリリースされるNGINX PlusとNAP WAFで動作します。
+| つまり、Signatureがリリースした時点の前にサポートされていたNGINX PlusとNAP WAFでは動作しません。
+| 最新のSignatureを利用するためには、その時点でサポートされているNGINX PlusとNAP WAFにアップグレードする必要があります。
+
+参考に、Attack Signatureをダウングレードする手順を以下に示します
+
+`NAP WAFのドキュメント <https://docs.nginx.com/nginx-app-protect/>`__ の ``Releases`` を見ると、このパッケージは ``March 9, 2022`` リリースされたものであることがわかります。
+
+Versionを指定してSignatureをインストールします。(この例では、古いSignatureを選択します)
+
+.. code-block:: cmdin
+
+  # apt install app-protect-attack-signatures=2022.03.15-1~focal
+
+  ** 省略 **
+  Unpacking app-protect-attack-signatures (2022.03.15-1~focal) over (2022.04.10-1~focal) ...
+  Setting up app-protect-attack-signatures (2022.03.15-1~focal) ...
+  In order for the signature update to take effect, NGINX must be reloaded.
+
+  #  apt list app-protect-attack-signatures -a
+  Listing... Done
+  app-protect-attack-signatures/stable 2022.04.10-1~focal amd64 [upgradable from: 2022.03.15-1~focal]
+  app-protect-attack-signatures/stable 2022.03.31-1~focal amd64
+  app-protect-attack-signatures/stable 2022.03.23-1~focal amd64
+  app-protect-attack-signatures/stable,now 2022.03.15-1~focal amd64 [installed,upgradable to: 2022.04.10-1~focal]
+  app-protect-attack-signatures/stable 2022.03.02-1~focal amd64
+  app-protect-attack-signatures/stable 2022.02.24-1~focal amd64
+  app-protect-attack-signatures/stable 2022.02.15-1~focal amd64
+  ** 省略 **
+
+NGINXを再起動し、Signatureが反映されたことを確認します
+
+.. code-block:: cmdin
+   
+   # nginx -s reload
+   # grep attack_signatures_package /var/log/nginx/error.log  | tail -2
+   2022/04/22 08:18:20 [notice] 8423#8423: APP_PROTECT { "event": "configuration_load_success", "software_version": "3.796.0", "completed_successfully":true,"attack_signatures_package":{"version":"2022.04.10","revision_datetime":"2022-04-10T12:51:45Z"},"threat_campaigns_package":{},"software_version":""}
+   2022/04/22 09:27:35 [notice] 8452#8452: APP_PROTECT { "event": "configuration_load_success", "software_version": "3.796.0", "completed_successfully":true,"attack_signatures_package":{"version":"2022.03.15","revision_datetime":"2022-03-15T11:35:54Z"},"threat_campaigns_package":{},"software_version":""}
+
+
+9. NAP WAF のアップグレード
+====
+
+ここでは、NAP WAFのアップグレードについてまとめます。
+
+| NAP WAFはアップグレードすることが可能です。
+| NAP WAFを古いVersionから新しいVersionにアップグレードされる場合、NAP WAFは一度削除され、再度新しいVersionがインストールされます。
+| 同時に古いデフォルトPolicyが削除され、新しいデフォルトPolicyが配置されます。独自にポリシーの設定を行っている場合には、NGINXの設定ファイルに従って動作します。
+
+NGINXのバージョンのみをアップグレードした場合、NAP WAFはアンインストールされるため、再度 NAP WAFのインストールが必要となります。
+NAP WAFのインストール後、以下コマンドを参考にNGINXの再起動を行ってください。
+
+.. code-block:: cmdin
+
+  sudo systemctl restart nginx
 
 Tips1. アカウントの登録
 ====

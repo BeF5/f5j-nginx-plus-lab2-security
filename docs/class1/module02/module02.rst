@@ -51,7 +51,6 @@ NGINX Plus のインストール
    
    head -7  /etc/nginx/nginx.conf
 
-
 .. code-block:: bash
   :caption: 実行結果サンプル
   :linenos:
@@ -63,4 +62,34 @@ NGINX Plus のインストール
    # for NJS
    load_module modules/ngx_http_js_module.so;
    load_module modules/ngx_stream_js_module.so;
-   
+
+3. NGINX の起動
+
+.. code-block:: cmdin
+
+   service nginx stop
+   service nginx start
+
+対象となるプロセスが動作していることを確認します
+
+.. code-block:: cmdin
+
+   ps -ef | grep -e nginx
+
+.. code-block:: bash
+  :caption: 実行結果サンプル
+  :linenos:
+  :emphasize-lines: 1-7
+
+   nginx       8408       1  0 08:18 ?        00:00:00 /bin/sh -c usr/share/ts/bin/bd-socket-plugin tmm_count 4 proc_cpuinfo_cpu_mhz 2000000 total_xml_memory 307200000 total_umu_max_size 3129344 sys_max_account_id 1024 no_static_config 2>&1 >> /var/log/app_protect/bd-socket-plugin.log
+   nginx       8410    8408  1 08:18 ?        00:00:01 usr/share/ts/bin/bd-socket-plugin tmm_count 4 proc_cpuinfo_cpu_mhz 2000000 total_xml_memory 307200000 total_umu_max_size 3129344 sys_max_account_id 1024 no_static_config
+   nginx       8412       1  0 08:18 ?        00:00:00 /bin/sh -c LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rpm/lib64; export LD_LIBRARY_PATH; /usr/bin/admd -d --log info 2>&1 > /var/log/adm/admd.log
+   nginx       8420    8412  0 08:18 ?        00:00:00 /usr/bin/admd -d --log info
+   root        8452       1  0 08:18 ?        00:00:00 nginx: master process /usr/sbin/nginx -c /etc/nginx/nginx.conf
+   nginx       8453    8452  0 08:18 ?        00:00:00 nginx: worker process
+   nginx       8454    8452  0 08:18 ?        00:00:00 nginx: worker process
+   root        8477    8366  0 08:21 pts/0    00:00:00 grep --color=auto -e nginx
+
+- ``1-2行目`` が NGINX App Protect WAFのプロセスです
+- ``3-4行目`` が NGINX App Protect WAFのプロセスです
+- ``5行目`` が NGINXのマスタープロセス、 ``6-7行目`` がワーカープロセスです
