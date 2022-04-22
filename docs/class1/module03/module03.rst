@@ -1207,7 +1207,7 @@ Curlコマンドではローカルホストへアクセスしており、正常�
 
 特定のIPアドレスに対して制御することができます
 
-8. Signatureのアップデート
+9. Signatureのアップデート
 ====
 
 NAP WAFのSignatureは頻繁にアップデートされます。
@@ -1302,7 +1302,7 @@ NGINXを再起動し、Signatureが反映されたことを確認します
    2022/04/22 09:27:35 [notice] 8452#8452: APP_PROTECT { "event": "configuration_load_success", "software_version": "3.796.0", "completed_successfully":true,"attack_signatures_package":{"version":"2022.03.15","revision_datetime":"2022-03-15T11:35:54Z"},"threat_campaigns_package":{},"software_version":""}
 
 
-9. NAP WAF のアップグレード
+10. NAP WAF のアップグレード
 ====
 
 ここでは、NAP WAFのアップグレードについてまとめます。
