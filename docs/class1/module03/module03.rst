@@ -1362,7 +1362,6 @@ NGINX App Protect WAF を導入した際に、必要となる場合は Threat Ca
 .. code-block:: bash
   :linenos:
 
-   ## 初回ロード時は、service nginx restart などのコマンドをご利用ください
    # nginx -s reload
 
 Threat Campaign Signatureを確認します。読み込むまでに数分程度時間がかかる場合があります
