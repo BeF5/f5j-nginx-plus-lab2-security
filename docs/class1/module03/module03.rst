@@ -1215,7 +1215,8 @@ Signatureのアップデートはインストール時に確認いただいた�
 
 以下が参考の確認結果です。
 
-.. code-block:: cmdin
+.. code-block:: bash
+  :linenos:
 
    # dpkg-query -l | grep app-protect
 
@@ -1231,7 +1232,8 @@ Signatureのアップデートはインストール時に確認いただいた�
 
 インストール可能なパッケージを Ubuntu で確認する方法は以下です。
 
-.. code-block:: cmdin
+.. code-block:: bash
+  :linenos:
 
    # apt list app-protect -a
    Listing... Done
@@ -1272,7 +1274,8 @@ Signatureのアップデートはインストール時に確認いただいた�
 
 Versionを指定してSignatureをインストールします。(この例では、古いSignatureを選択します)
 
-.. code-block:: cmdin
+.. code-block:: bash
+  :linenos:
 
   # apt install app-protect-attack-signatures=2022.03.15-1~focal
 
@@ -1294,13 +1297,13 @@ Versionを指定してSignatureをインストールします。(この例では
 
 NGINXを再起動し、Signatureが反映されたことを確認します
 
-.. code-block:: cmdin
-   
+.. code-block:: bash
+  :linenos:
+ 
    # nginx -s reload
    # grep attack_signatures_package /var/log/nginx/error.log  | tail -2
    2022/04/22 08:18:20 [notice] 8423#8423: APP_PROTECT { "event": "configuration_load_success", "software_version": "3.796.0", "completed_successfully":true,"attack_signatures_package":{"version":"2022.04.10","revision_datetime":"2022-04-10T12:51:45Z"},"threat_campaigns_package":{},"software_version":""}
    2022/04/22 09:27:35 [notice] 8452#8452: APP_PROTECT { "event": "configuration_load_success", "software_version": "3.796.0", "completed_successfully":true,"attack_signatures_package":{"version":"2022.03.15","revision_datetime":"2022-03-15T11:35:54Z"},"threat_campaigns_package":{},"software_version":""}
-
 
 10. NAP WAF のアップグレード
 ====
@@ -1314,9 +1317,64 @@ NGINXを再起動し、Signatureが反映されたことを確認します
 NGINXのバージョンのみをアップグレードした場合、NAP WAFはアンインストールされるため、再度 NAP WAFのインストールが必要となります。
 NAP WAFのインストール後、以下コマンドを参考にNGINXの再起動を行ってください。
 
-.. code-block:: cmdin
+.. code-block:: bash
+  :linenos:
 
-  sudo systemctl restart nginx
+  # sudo su
+  systemctl restart nginx
+
+11. Threat Campaign Signature
+====
+
+NAP WAFは Threat Campaign という機能を持っています。
+これは、F5のセキュリティチームで観測した、攻撃のキャンペーン(主要な攻撃の手口)の一連のふるまいから同種の攻撃であることを特定し高い精度で検知、制御する機能です。
+Attack Signatureは各通信のデータを対象とするのに対し、この機能は攻撃開始から複数の通信に渡るまでそのふるまいで判定する点が違いとなります。
+
+詳細は `Threat Campaigns <https://docs.nginx.com/nginx-app-protect/configuration-guide/configuration/#threat-campaigns>`__ をご覧ください。
+
+Threat Campaign の導入方法を紹介します。
+
+NGINX App Protect WAF を導入した際に、必要となる場合は Threat Campaign Signature を個別にインストールする必要があります。
+
+.. code-block:: bash
+  :linenos:
+
+   # sudo su
+   apt-get install app-protect-threat-campaigns
+
+インストールが完了した後、パッケージを確認します
+
+.. code-block:: bash
+  :linenos:
+
+   # dpkg-query -l | grep app-protect
+   ii  app-protect                        26+3.796.0-1~focal                    amd64        App-Protect package for Nginx Plus, Includes all of the default files and examples. Nginx App Protect provides web application firewall (WAF) security protection for your web applications, including OWASP Top 10 attacks.
+   ii  app-protect-attack-signatures      2022.04.10-1~focal                    amd64        Attack Signature Updates for App-Protect
+   ii  app-protect-common                 10.29.1-1~focal                       amd64        NGINX App Protect
+   ii  app-protect-compiler               10.29.1-1~focal                       amd64        Control-plane(aka CP) for waf-general debian
+   ii  app-protect-dos                    26+2.2.20-1~focal                     amd64        Nginx DoS protection
+   ii  app-protect-engine                 10.29.1-1~focal                       amd64        NGINX App Protect
+   ii  app-protect-plugin                 3.796.0-1~focal                       amd64        NGINX App Protect plugin
+   ii  app-protect-threat-campaigns       2022.03.30-1~focal                    amd64        Threat Campaign Updates for App-Protect
+
+プロセスを再起動します。
+
+.. code-block:: bash
+  :linenos:
+
+   ## 初回ロード時は、service nginx restart などのコマンドをご利用ください
+   # nginx -s reload
+
+Threat Campaign Signatureを確認します。読み込むまでに数分程度時間がかかる場合があります
+
+.. code-block:: bash
+  :linenos:
+
+   # grep attack_signatures_package /var/log/nginx/error.log  | tail -2
+   2022/04/22 11:12:43 [notice] 8452#8452: APP_PROTECT { "event": "configuration_load_success", "software_version": "3.796.0", "completed_successfully":true,"attack_signatures_package":{"version":"2022.04.10","revision_datetime":"2022-04-10T12:51:45Z"},"threat_campaigns_package":{},"software_version":""}
+   2022/04/22 11:16:33 [notice] 8452#8452: APP_PROTECT { "event": "configuration_load_success", "software_version": "3.796.0", "completed_successfully":true,"attack_signatures_package":{"version":"2022.04.10","revision_datetime":"2022-04-10T12:51:45Z"},"threat_campaigns_package":{"version":"2022.04.20","revision_datetime":"2022-04-20T14:14:04Z"},"software_version":""}
+
+``threat_campaigns_package`` の項目にVersionが記載されました。
 
 Tips1. アカウントの登録
 ====
