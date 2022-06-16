@@ -91,5 +91,5 @@ NGINX Plus のインストール
    root        8477    8366  0 08:21 pts/0    00:00:00 grep --color=auto -e nginx
 
 - ``1-2行目`` が NGINX App Protect WAFのプロセスです
-- ``3-4行目`` が NGINX App Protect WAFのプロセスです
+- ``3-4行目`` が NGINX App Protect DoSのプロセスです
 - ``5行目`` が NGINXのマスタープロセス、 ``6-7行目`` がワーカープロセスです

@@ -10,7 +10,7 @@ NAP WAFは、ワールドワイドで実績豊富なF5製WAFの機能を移植�
        :width: 400
 
 | NAP WAFはNGINXの動的モジュールであるという特徴から、GatewayからIngress Controller、更にコンテナとして柔軟なデプロイが可能です。
-| アプリケーションの性質によりセキュリティ機能の実装方法が異なると思いますが、NAP WAFのはその柔軟な適応力から最適な形でWAFを実現することができます。
+| アプリケーションの性質によりセキュリティ機能の実装方法が異なると思いますが、NAP WAFはその柔軟な適応力から最適な形でWAFを実現することができます。
 
    .. image:: ./media/nap-waf-structure.jpg
        :width: 400
@@ -97,7 +97,7 @@ WAFの設定を確認します
   }
 
 
-| NAP WAFでは、WAFののセキュリティポリシーをJSONファイルで指定します。
+| NAP WAFでは、WAFのセキュリティポリシーをJSONファイルで指定します。
 | 設定ファイルの内容を確認します。
 
 .. code-block:: cmdin
@@ -204,7 +204,7 @@ WAFの設定を確認します
    # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_custom_log_format.json custom_log_format.json
    cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l2_custom_policy.json custom_policy.json
 
-WAFを設定を確認します
+WAFの設定を確認します
 
 今回確認するポリシーについて前回の内容との差分を確認します。
 
@@ -282,10 +282,10 @@ WAFを設定を確認します
 
 - 中段に表示されている ``support_id`` をまず最初に説明します。先程のBlock Pageを確認してください。こちらに表示されている `Support ID` と一致していることが確認できます。この様にNAP WAFでは、セキュリティログを一意に特定する値として `Support ID` が存在します。攻撃が拒否された場合には、Block された画面(HTML)により該当のログを特定することが可能です
 - ``bot_category`` は `HTTP Library` 、 ``bot_signature_name`` は `curl` となっています
-- ``client_class`` は Bot SIgnature によるClassというカテゴリを示しており、 `Untrusted Bot` となっています
+- ``client_class`` は Bot Signature によるClassというカテゴリを示しており、 `Untrusted Bot` となっています
 - ``outcome`` は 処理の結果を示しており、 ``REJECETD(拒否)`` となることがわかります
 - ``sig_`` から始まる項目が、 `signature` に関する情報を示しております。各項目は、Signature ID、Signature Name、Signature Set Name となっています
-- ``voilation_`` から始まる項目が、 `VIOLATION` に関する情報を示しております。通信がどのような脅威に該当するのか確認できます
+- ``violation_`` から始まる項目が、 `VIOLATION` に関する情報を示しております。通信がどのような脅威に該当するのか確認できます
 - VIOLATIONの中で ``violation_rating`` があり、これはその重要度(危険度)を示しています。NAP WAFのDefault Policyでは、検知した通信で複数の問題が確認され、その結果判定されたRatingが一定の値より高い場合に通信が拒否される設定となっています。
 
 ``JSON`` 形式の表示は、該当ログの ``JSON`` タブをクリックしてください
@@ -321,7 +321,7 @@ Overviewと同様に結果はシンプルです。
    .. image:: ./media/elk-l2-dashboard-falsepositive.jpg
        :width: 400
 
-| 以下のグラフは、ある瞬間に特定のシグネチャや違反にヒットしたユニークなIPの総数を表示します。
+| 上記のグラフは、ある瞬間に特定のシグネチャや違反にヒットしたユニークなIPの総数を表示します。
 | これらのグラフでスパイクが発生している場合、多くのクライアントが同じルールをトリガーしていることを意味し、特定のクライアントに依存しない検出結果、
 | つまり ``誤検知の可能性の高い通信`` を見つけることを目的としています。
 | 誤検知と判定された場合には、対象Signatureを除外設定にするなどの対処をセキュリティポリシーに対して実施することとなります。
@@ -415,7 +415,7 @@ WAFのセキュリティポリシーを変更し、設定を反映します
    # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_custom_log_format.json custom_log_format.json
    cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l3_custom_policy.json custom_policy.json
 
-WAFを設定を確認します
+WAFの設定を確認します
 
 今回確認するポリシーについて前回の内容との差分を確認します。
 
@@ -561,7 +561,7 @@ WAFのセキュリティポリシーを変更し、設定を反映します
    # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_custom_log_format.json custom_log_format.json
    cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l4_custom_policy.json custom_policy.json
 
-WAFを設定を確認します
+WAFの設定を確認します
 
 今回確認するポリシーについて前回の内容との差分を確認します。
 
@@ -663,7 +663,7 @@ WAFのセキュリティポリシーを変更し、設定を反映します
    # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_custom_log_format.json custom_log_format.json
    cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l5_custom_policy.json custom_policy.json
 
-WAFを設定を確認します
+WAFの設定を確認します
 
 今回確認するポリシーについて前回の内容との差分を確認します。
 
@@ -786,7 +786,7 @@ Sensitive Parameterの他、NAP WAFではより詳細な制御をすることが
    # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_custom_log_format.json custom_log_format.json
    cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l6_custom_policy.json custom_policy.json
 
-WAFを設定を確認します
+WAFの設定を確認します
 
 今回確認するポリシーについて前回の内容との差分を確認します。
 
@@ -963,7 +963,7 @@ WAFを設定を確認します
 7. Bot Clientの確認
 ====
 
-NAP WAFはBot Signatureを持ち、クライアントが操作するツール以外に、Google等に代表される各サイトをクロールするツールに置いても判定・制御することが可能です。
+NAP WAFはBot Signatureを持ち、クライアントが操作するツール以外に、Google等に代表される各サイトをクロールするツールに於いても判定・制御することが可能です。
 
 1. 設定
 ----
@@ -979,7 +979,7 @@ WAFのセキュリティポリシーを変更し、設定を反映します
    # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_custom_log_format.json custom_log_format.json
    cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l7_custom_policy.json custom_policy.json
 
-WAFを設定を確認します
+WAFの設定を確認します
 
 今回確認するポリシーについて前回の内容との差分を確認します。
 
@@ -1101,18 +1101,18 @@ Curl コマンドを使ってリクエストを送信します。
 - ``client_application`` が ``Chrome`` 、 ``client_class`` が ``Browser`` となっています
 
 この様に、Curlコマンドとブラウザで接続した場合にはそれぞれ別のクライアントであることが識別されており、
-Bot Signatureを利用することでNAP WAFが持つBot Signatureの機能により通信の制御が可能です
+NAP WAFが持つBot Signatureの機能により通信の制御が可能です
 
 
 8. IPアドレスによる制御
 ====
 
-IPアドレスによる制御を行い、NAP WAFの機能で制御を行い、同様にログを確認することができます。
+NAP WAFの機能でIPアドレスによる制御を行い、同様にログを確認することができます。
 
 1. 設定
 ----
 
-Botの設定を行います。
+IPアドレス制御の設定を行います。
 WAFのセキュリティポリシーを変更し、設定を反映します
 
 .. code-block:: cmdin
@@ -1123,7 +1123,7 @@ WAFのセキュリティポリシーを変更し、設定を反映します
    # cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l1_custom_log_format.json custom_log_format.json
    cp ~/f5j-nginx-plus-lab2-security-conf/waf/waf-l8_custom_policy.json custom_policy.json
 
-WAFを設定を確認します
+WAFの設定を確認します
 
 今回確認するポリシーについて前回の内容との差分を確認します。
 
