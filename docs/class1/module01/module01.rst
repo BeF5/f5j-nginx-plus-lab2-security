@@ -49,11 +49,3 @@ Clientのショートカットがありますので、そちらをダブルク�
       :width: 200
 
 
-Linux Hostへの接続 (Jump Host を利用しない場合)
------------------------------------------------
-
-| ``ubuntu01`` へのSSH接続は、Jump Host経由または、SSH鍵認証を用いて接続可能です。SSH鍵の登録手順は以下を参照ください
-| **SSH鍵を登録頂いていない場合、SSHはグレーアウトします** 
-| 手順： `UDF LAB SSH鍵登録マニュアル <https://github.com/hiropo20/partner_nap_workshop_secure/blob/main/UDF_SSH_Key.pdf>`_
-| (こちらの手順が必要となる場合、本マニュアルを閲覧可に変更します)
-
