@@ -8,6 +8,7 @@ NAP Dosは、ワールドワイドで実績豊富なF5製WAFのL7DoS機能を移
 
 NAP DosはNGINXの動的モジュールであるという特徴から、GatewayからIngress Controller、更にコンテナとして柔軟なデプロイが可能です。
 
+..
    .. image:: ./media/nap-waf-structure.jpg
        :width: 400
 
@@ -102,7 +103,6 @@ NAP Dosを設定します
 .. code-block:: bash
   :caption: 実行結果サンプル
   :linenos:
-  :emphasize-lines: 7
 
   {
       "mitigation_mode" : "standard",
@@ -146,17 +146,17 @@ NAP Dosを設定します
 .. NOTE::
    クライアント端末のブラウザより、以下の手順で接続いただくことも可能です
 
-   .. image:: ./media/udf_docker_elk.jpg
+   .. image:: ../module03/media/udf_docker_elk.jpg
        :width: 200
 
 左上メニューを開いてください。
 
-   .. image:: ./media/elk-menu.jpg
+   .. image:: ../module03/media/elk-menu.jpg
        :width: 400
 
 ``Discover`` をクリックし、表示された画面の `+ Add filter` の下にすでに登録されている ``app-protect-dos-logs`` を選択してください
 
-   .. image:: ./media/elk-discover-waflogs.jpg
+   .. image:: ../module03/media/elk-discover-waflogs.jpg
        :width: 400
 
 | 正しくNAP WAFよりログが転送されている場合、画面のようなグラフが表示されます。
