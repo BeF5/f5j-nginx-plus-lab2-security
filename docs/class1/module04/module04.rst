@@ -93,7 +93,7 @@ NAP Dosを設定します
   }
 
 
-| NAP WAFでは、WAFのセキュリティポリシーをJSONファイルで指定します。
+| NAP Dosは、NAP Dosの動作をJSONファイルで指定します。
 | 設定ファイルの内容を確認します。
 
 .. code-block:: cmdin
