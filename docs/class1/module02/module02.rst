@@ -42,6 +42,7 @@ NGINX Plus のインストール
 
 .. code-block:: cmdin
    
+   # sudo su
    mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf-bak
    cat ~/f5j-nginx-plus-lab2-security-conf/base/loadmodules.conf /etc/nginx/nginx.conf-bak > /etc/nginx/nginx.conf 
 

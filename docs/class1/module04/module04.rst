@@ -1,6 +1,8 @@
 NGINX App Protect Dos (NAP Dos)
 #######
 
+``本手順は作成中です``
+
 NAP Dos について
 ====
 
@@ -8,10 +10,14 @@ NAP Dosは、ワールドワイドで実績豊富なF5製WAFのL7DoS機能を移
 
 NAP DosはNGINXの動的モジュールであるという特徴から、GatewayからIngress Controller、更にコンテナとして柔軟なデプロイが可能です。
 
-..
-   .. image:: ./media/nap-waf-structure.jpg
+   .. image:: ./media/nap-dos-structure.png
        :width: 400
 
+   .. image:: ./media/nap-dos-structure2.png
+       :width: 400
+
+   .. image:: ./media/nap-dos-structure3.png
+       :width: 400
 
 1. NAP Dos の設定
 ====
@@ -25,15 +31,18 @@ NAP Dosを設定します
 
    # sudo su
    cd /etc/nginx/conf.d
-   cp ~/f5j-nginx-plus-lab2-security-conf/l7dos/l7dos-l1_demo.conf default.conf
-   cp ~/f5j-nginx-plus-lab2-security-conf/ssl/* ssl/
+   cp ~/f5j-nginx-plus-lab2-security-conf/l7dos/l7dos-l1_demo.conf /etc/nginx/conf.d/default.conf
+   cp ~/f5j-nginx-plus-lab2-security-conf/l7dos/l7dos-l1_plus_api.conf /etc/nginx/conf.d/plus_api.conf
+   
+   mkdir -p /etc/nginx/conf.d/ssl
+   cp ~/f5j-nginx-plus-lab2-security-conf/ssl/* /etc/nginx/conf.d/ssl/
 
 
 設定ファイルを確認します。 server block にて各種 L7Dos の設定を読み込んでいます。
 
 .. code-block:: cmdin
 
-  cat default.conf
+  cat ~/etc/nginx/conf.d/default.conf
 
 .. code-block:: bash
   :linenos:
@@ -112,6 +121,52 @@ NAP Dosを設定します
       "tls_fingerprint" : "on"
   }
   
+.. code-block:: cmdin
+
+  cat ~/etc/nginx/conf.d/plus_api.conf
+
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
+
+  server {
+      listen 8888;
+      access_log /var/log/nginx/mng_access.log;
+  
+      location /api {
+          api write=on;
+          # directives limiting access to the API
+      }
+  
+      location = / {
+          rewrite ^(.*)$ https://$host/dashboard.html permanent;
+      }
+  
+      location = /dashboard.html {
+          root   /usr/share/nginx/html;
+      }
+  
+  }
+  
+  server {
+      listen 8889;
+      access_log /var/log/nginx/mng_access.log;
+  
+      location /api {
+          app_protect_dos_api;
+      }
+  
+      location = / {
+          rewrite ^(.*)$ https://$host/dashboard-dos.html permanent;
+      }
+  
+      location = /dashboard-dos.html {
+          root   /usr/share/nginx/html;
+      }
+  
+  }
+
 
 プロセスを再起動し、設定を反映します
 
@@ -130,7 +185,7 @@ NAP Dosを設定します
 
 .. code-block:: cmdin
 
-  curl -s localhost  | grep title
+  curl -s localhost:8080  | grep title
 
 .. code-block:: bash
   :caption: 実行結果サンプル
@@ -156,23 +211,21 @@ NAP Dosを設定します
 
 ``Discover`` をクリックし、表示された画面の `+ Add filter` の下にすでに登録されている ``app-protect-dos-logs`` を選択してください
 
-   .. image:: ../module03/media/elk-discover-waflogs.jpg
+   .. image:: ../module03/media/elk-discover-doslogs.png
        :width: 400
 
-| 正しくNAP WAFよりログが転送されている場合、画面のようなグラフが表示されます。
+| 正しくNAP DoSよりログが転送されている場合、画面のようなグラフが表示されます。
 | 画面の内容が最新の状態となっていない場合、画面右上の時間を確認の上、 ``Refresh`` をクリックしてください。
 
-..
-   .. image:: ./media/elk-discover-waf2.jpg
+
+   .. image:: ./media/elk-discover-dos.png
        :width: 400
 
 | 表示されたログの詳細を一つ確認してみましょう。
 | 当該のログの左側 ``>`` をクリックすると詳細が表示されます。
 
-..
-   .. image:: ./media/elk-l1-discover.jpg
+   .. image:: ./media/elk-discover-dos2.png
        :width: 400
-
 
 
 2. ベース通信の実施
@@ -192,12 +245,19 @@ Windows Jump Hostへログインいただくと、SSHClientのショートカッ
    - .. image:: ../module01/media/putty_menu.jpg
       :width: 200
 
+必要なファイルを取得します
+
+.. code-block:: cmdin
+   
+   sudo su
+   cd ~/
+   git clone https://github.com/BeF5/f5j-nginx-plus-lab2-security-conf.git
 
 2. ベーストラフィックの実行
 ----
 
 | 以下コマンドを実行し、ベースとなる通信を実行します。
-| ベースラインを作成するために10分程度経過した後次のタスクを実施してください。
+| ベースラインを作成するために ``10分`` 程度経過した後次のタスクを実施してください。
 
 スクリプトに実行権限を付与します
 
@@ -213,7 +273,32 @@ Windows Jump Hostへログインいただくと、SSHClientのショートカッ
    ./good.sh
    # ラボ終了時、Ctrl+C で停止してください
 
-3. HTTP Floodの実施
+3. Dashboardの表示
+====
+
+2. NGINX Plus Dashboard ステータスの確認
+----
+
+作業を行うホストからブラウザでNGINX Plus Dashboardを開く場合、 ``ubuntu01``の接続はメニューより ``PLUS  DASHBOARD``をクリックしてください。
+踏み台ホストから接続する場合、ブラウザで `http://10.1.1.7:8888/dashboard-dos.html <http://10.1.1.7:8888/dashboard-dos.html>`__ を開いてください
+
+表示されたオブジェクトをクリックしてください
+
+   .. image:: ./media/plus-dashboard-dos.html
+       :width: 400
+
+NAP DoS で保護対象となっているオブジェクト・グラフが表示されます。
+画面下部のグラフを表示する
+
+   .. image:: ./media/plus-dashboard-dos2.html
+       :width: 400
+
+3. ELK ステータスの確認
+----
+
+``Jump Host`` でブラウザを起動し、 ``http://elk:5601`` を開いてください
+
+4. HTTP Floodの実施
 ====
 
 1. コマンドの実行
@@ -235,7 +320,7 @@ Windows Jump Hostへログインいただくと、SSHClientのショートカッ
 3. ELK ステータスの確認
 ----
 
-4. Slow HTTPの実施
+5. Slow HTTPの実施
 ====
 
 1. コマンドの実行
