@@ -393,6 +393,7 @@ Dashboardを開くと、トラフィックが転送されている状態が確�
        :width: 400
 
 グラフの表示項目は以下の内容です
+
 - ``Top talkers`` : 保護対象サービスに対し接続を行うクライアント、及びその各通信制御状況
 - ``Client HTTP transactions/s`` : クライアントのHTTP Transaction
 - ``HTTP mitigation`` : Mitigationの状況
