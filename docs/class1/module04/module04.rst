@@ -46,7 +46,10 @@ NAP Dosを設定します
 
   diff -u /etc/nginx/nginx.conf- /etc/nginx/nginx.conf
 
-  root@ip-10-1-1-7:/etc/nginx# diff -u nginx.conf-dos-def nginx.conf
+.. code-block:: bash
+  :linenos:
+  :caption: 実行結果サンプル
+
   --- nginx.conf- 2023-01-24 19:34:56.530164984 +0900
   +++ nginx.conf  2023-01-24 19:37:00.063823686 +0900
   @@ -8,16 +8,18 @@
@@ -103,7 +106,7 @@ NAP Dosを設定します
   -#}
 
 
-server block にて各種 L7Dos の設定を読み込んでいます。
+NAP DoSの設定を含むコンフィグファイルを確認します。server block にて各種 L7Dos の設定を読み込んでいます。
 
 .. code-block:: cmdin
 
@@ -280,15 +283,15 @@ server block にて各種 L7Dos の設定を読み込んでいます。
 
 NGINX Plus Dashboardで今後ステータスを確認するため、ブラウザでアクセスしておきます
 
-作業を行うホストからブラウザでNGINX Plus Dashboardを開く場合、 ``ubuntu01``の接続はメニューより ``PLUS  DASHBOARD``をクリックしてください。
+作業を行うホストからブラウザでNGINX Plus Dashboardを開く場合、 ``ubuntu01`` の接続はメニューより ``PLUS  DASHBOARD`` をクリックしてください。
 踏み台ホストから接続する場合、ブラウザで `http://10.1.1.7:8888/dashboard-dos.html <http://10.1.1.7:8888/dashboard-dos.html>`__ を開いてください
 
 表示されたオブジェクトをクリックしてください
 
-   .. image:: ./media/plus-dashboard-dos.png
+   - .. image:: ./media/plus-dashboard-dos.png
        :width: 400
 
-   .. image:: ./media/plus-dashboard-dos2.png
+   - .. image:: ./media/plus-dashboard-dos2.png
        :width: 400
 
 - ``Name`` が保護対象となる ``app_protect_dos_name`` で指定したオブジェクト名が表示されます
@@ -382,7 +385,7 @@ Dashboardを開くと、トラフィックが転送されている状態が確�
    Dashboardの左上テキストボックスに、デフォルトの条件が指定されているので削除してすべての情報が表示されるように変更ください
 
    .. image:: ./media/elk-dashboard-dos-delete-example.png
-       :width: 200
+       :width: 400
 
 ``docker_host(10.1.1.5)`` からのトラフィックを受信し、すべて ``Allow(許可)`` となっていることがわかります
 
