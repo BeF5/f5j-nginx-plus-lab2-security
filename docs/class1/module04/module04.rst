@@ -540,7 +540,7 @@ Slow HTTPのベース通信を実行中の場合はこちらのステップを�
 .. NOTE::
   ``docker_host(10.1.1.5) が bad actorとして検知された場合`` 、 ``ubuntu01 (10.1.1.7)`` でNGINXを再起動し、再度ベーストラフィックを学習してください
 
-  .. code-block:: cmdin
+  .. code-block:: 
 
     service nginx restart
 
