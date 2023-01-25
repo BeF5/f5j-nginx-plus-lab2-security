@@ -136,8 +136,7 @@ NAP DoSの設定を含むコンフィグファイルを確認します。server 
       ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
       app_protect_dos_security_log_enable on;
       app_protect_dos_security_log "/etc/app_protect_dos/log-default.json" syslog:server=elasticsearch:5261;
-      set $loggable '0';
-      access_log syslog:server=elasticsearch:5561 log_dos if=$loggable;
+      access_log syslog:server=elasticsearch:5561 log_dos;
   
       location / {
           app_protect_dos_enable on;
