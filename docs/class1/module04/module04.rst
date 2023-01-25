@@ -248,7 +248,7 @@ NAP DoSの設定を含むコンフィグファイルを確認します。server 
 
 この通信の結果をELKで取得していることを確認します
 
-``Jump Host`` でブラウザを起動し、 ``http://elk:5601`` を開いてください
+``Jump Host`` でブラウザを起動し、 `http://elk:5601 <http://elk:5601>`__ を開いてください
 
 .. NOTE::
    クライアント端末のブラウザより、以下の手順で接続いただくことも可能です
@@ -520,6 +520,9 @@ Bad Actorのログが記録されていることがわかります。内容を�
    .. image:: ./media/elk-dashboard-dos-slowhttp-badactor.png
        :width: 400
 
+.. NOTE::
+  ``docker_host(10.1.1.5) が bad actor`` として検知されている場合には、 次のラボで ``docker_host(10.1.1.5) が bad actorとして検知された場合`` を参照してください
+
 4. Slow HTTPの停止
 ----
 
@@ -532,11 +535,20 @@ Bad Actorのログが記録されていることがわかります。内容を�
 1. ベース通信の実施
 ----
 
-| Slow HTTPのベース通信を実行中の場合はこちらのステップを飛ばしてください。
-| 以下コマンドを、``docker_host(10.1.1.5)`` にて実行します
+Slow HTTPのベース通信を実行中の場合はこちらのステップを飛ばしてください。
+必要に応じて再度ベース通信を、 ``docker_host(10.1.1.5)`` にて実行します
+
+.. NOTE::
+  ``docker_host(10.1.1.5) が bad actorとして検知された場合`` 、 ``ubuntu01 (10.1.1.7)`` でNGINXを再起動し、再度ベーストラフィックを学習してください
+
+  .. code-block:: cmdin
+
+    service nginx restart
 
 .. code-block:: cmdin
 
+  # cd ~/f5j-nginx-plus-lab2-security-conf/l7dos/
+  # chmod +x *sh
   ./good.sh
    # NAP DoSのラボが完了後、Ctrl+C で停止していただきます
 
@@ -563,7 +575,7 @@ Slow HTTPの手順と同様に、 ``NGINX Plus Dashbaord`` 、 ``ELK`` の内容
 .. code-block:: cmdin
 
   # cd ~/f5j-nginx-plus-lab2-security-conf/l7dos/
-  chmod +x *sh
+  # chmod +x *sh
   ./http1flood.sh
 
   # 本項目の動作を確認後、Ctrl+C で停止していただきます
