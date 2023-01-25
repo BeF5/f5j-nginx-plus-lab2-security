@@ -242,7 +242,7 @@ NAP DoSの設定を含むコンフィグファイルを確認します。server 
 
   <title>OWASP Juice Shop</title>
 
-1. ELKの確認
+2. ELKの確認
 ~~~~
 
 この通信の結果をELKで取得していることを確認します
@@ -297,7 +297,7 @@ NGINX Plus Dashboardで今後ステータスを確認するため、ブラウザ
 - ``Health`` から ``Learning`` が現在の状態を示します
 - ``Protocol`` から ``TLS Fingerprint`` は設定で指定した内容を示します
 
-2. 作業ホストへ接続
+4. 作業ホストへ接続
 ~~~~
 
 正常な通信は ``docker_host(10.1.1.5)`` より、攻撃トラフィックは ``ubuntu02(10.1.1.6)`` より実行します
