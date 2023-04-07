@@ -22,8 +22,14 @@
    .. image:: ./media/udflab_basic_Lab_jp.png
       :width: 400
 
-Windows Jump HostへのRDP接続
-----------------------------
+RDP接続
+----
+
+a. Windows Jump HostへのRDP接続
+~~~~
+
+.. NOTE::
+   端末のセキュリティ設定等により、RDPクライアントによる接続が出来ない場合、 `b. Windows Jump HostへVNCで接続 <#b-windows-jump-hostvnc>`__ を参照してください
 
 
 Windows Jump HostからCLIの操作を行う場合、以下タブからRDP Clientファイルをダウンロードいただき接続ください
@@ -40,7 +46,51 @@ Windows Jump HostからCLIの操作を行う場合、以下タブからRDP Clien
     
    - .. image:: ./media/udf_jumpbox_loginuser2.png
        :width: 200
-   
+
+
+b. Windows Jump HostへVNCで接続
+~~~~
+
+vnc-windowsの ``vnc-win`` をクリックしてください
+
+   .. image:: ./media/udf_vnc_jumpbox.png
+      :width: 200
+
+``接続`` をクリックしてください
+
+   .. image:: ./media/udf_vnc_jumpbox2.png
+      :width: 400
+
+パスワードが求められます。 ``admin`` と入力してください
+
+   .. image:: ./media/udf_vnc_jumpbox3.png
+      :width: 400
+
+Windowsのログイン画面が表示されます。VNCのメニューより、 ``Ctrl+Alt+Delを送信`` をクリックします
+
+   .. image:: ./media/udf_vnc_jumpbox4.png
+      :width: 400
+
+適切なユーザを選択し、パスワードを ``キーボードで入力`` してください。ログインの情報は `a. Windows Jump HostへのRDP接続 <#a-windows-jump-hostrdp>`__ のパスワード情報を確認してください
+
+   .. image:: ./media/udf_vnc_jumpbox5.png
+      :width: 400
+
+初期状態では、画面の解像度が低い値の場合があります。以下手順を参考に環境にあわせて解像度を変更してください
+デスクトップで右クリックから ``Display Settings`` を選択
+
+   - .. image:: ./media/udf_vnc_display.png
+      :width: 200
+
+   - .. image:: ./media/udf_vnc_display2.png
+      :width: 400
+
+   - .. image:: ./media/udf_vnc_display3.png
+      :width: 400
+
+SSHの接続
+----
+
 Windows Jump Hostへログインいただくと、SSH
 Clientのショートカットがありますので、そちらをダブルクリックし
 ``ubuntu01`` へ接続ください
@@ -50,5 +100,7 @@ Clientのショートカットがありますので、そちらをダブルク�
 
    - .. image:: ./media/putty_menu.jpg
       :width: 200
+
+
 
 
