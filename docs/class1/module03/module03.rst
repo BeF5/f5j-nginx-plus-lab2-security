@@ -112,7 +112,7 @@ WAFの設定を確認します
   {
       "policy":
       {
-          "name": "policy-acceptall",
+          "name": "acceptall",
           "template": { "name": "POLICY_TEMPLATE_NGINX_BASE" },
           "applicationLanguage": "utf-8",
           "enforcementMode": "transparent"
@@ -345,7 +345,7 @@ Overviewと同様に結果はシンプルです。
 
 セキュリティポリシーの設定は `2. 通信のブロック <https://f5j-nginx-plus-lab2-security.readthedocs.io/en/latest/class1/module03/module03.html#id3>`__ のポリシーを利用します
 
-``Jump Host`` より ``Owasp Juice Shop`` にアクセスします。ブラウザを起動し、 ``http://juice-shop`` を開いてください
+``Jump Host`` より ``Owasp Juice Shop`` にアクセスします。ブラウザを起動し、 `http://juice-shop <http://juice-shop>`__ を開いてください
 
 | 画面右上 ``Account`` > ``Login`` をクリックします。
 | すでに別のアカウントでログインしている場合、一度ログアウトをしてからこの作業を行ってください。
@@ -370,7 +370,7 @@ Webページ側で期待した応答と異なるため、 ``[object Object]`` �
    .. image:: ./media/owasp-js-login-injection-block.jpg
        :width: 400
 
-| 開発者ツールの ``Network`` を開き、検索ボックスに ``location`` を入力してください。
+| 開発者ツールの ``Network`` を開き、検索ボックスに ``login`` を入力してください。
 | 下のリクエストの ``login`` を選択し、 ``Response`` を確認すると、NAP WAFが応答した情報が返されていることがわかります。
 
 それではログの情報を確認します。 ``Jump Host`` でブラウザを起動し、 `http://elk:5601 <http://elk:5601>`__ を開いてください
@@ -479,7 +479,7 @@ WAFの設定を確認します
 4. 動作確認
 ----
 
-``Jump Host`` より ``Owasp Juice Shop`` にアクセスします。ブラウザを起動し、 ``http://juice-shop`` を開いてください
+``Jump Host`` より ``Owasp Juice Shop`` にアクセスします。ブラウザを起動し、 `http://juice-shop <http://juice-shop>`__  を開いてください
 
 | 画面右上 ``Account`` > ``Login`` をクリックします。
 | すでに別のアカウントでログインしている場合、一度ログアウトをしてからこの作業を行ってください。
@@ -610,7 +610,7 @@ WAFの設定を確認します
 2. 動作確認
 ----
 
-``Jump Host`` より ``Owasp Juice Shop`` にアクセスします。ブラウザを起動し、 ``http://juice-shop`` を開いてください
+``Jump Host`` より ``Owasp Juice Shop`` にアクセスします。ブラウザを起動し、 `http://juice-shop <http://juice-shop>`__  を開いてください
 
 | 画面右上 ``Account`` > ``Login`` をクリックします。
 | すでに別のアカウントでログインしている場合、一度ログアウトをしてからこの作業を行ってください。
@@ -1399,7 +1399,7 @@ OWASP Juice Shopではアカウントの登録が可能です。ログインい�
 
 動作確認の為、 ``OWASP Juice SHop`` に新規アカウントを登録します。
 
-``Jump Host`` より ``Owasp Juice Shop`` にアクセスします。ブラウザを起動し、 ``http://juice-shop`` を開いてください
+``Jump Host`` より ``Owasp Juice Shop`` にアクセスします。ブラウザを起動し、 `http://juice-shop <http://juice-shop>`__  を開いてください
 
 画面右上 ``Account`` > ``Login`` をクリックします。
 すでに別のアカウントでログインしている場合、一度ログアウトをしてください。
