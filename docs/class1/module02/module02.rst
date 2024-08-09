@@ -7,7 +7,7 @@ NGINX Plus のインストール
 1. NGINX Plus、アドオンモジュールのインストール (15min)
 ----
 
-こちらの手順「 `NGINX Plusのインストール (15min) <https://f5j-nginx-plus-lab1.readthedocs.io/en/latest/class1/module2/module2.html#nginx-plus-15min>`__」を参考に、NGINX Plus、アドオンモジュールをインストールをインストールしてください
+こちらの手順「 `NGINX Plusのインストール (15min) <https://f5j-nginx-plus-lab1.readthedocs.io/en/latest/class1/module2/module2.html#nginx-plus-15min>`__」を参考に、NGINX Plus、アドオンモジュールをインストールしてください
 
 手順の内容に加えて、必要となるモジュールをインストールしてください
 
