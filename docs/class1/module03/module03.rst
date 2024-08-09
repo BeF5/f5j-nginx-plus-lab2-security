@@ -1347,7 +1347,7 @@ NAP WAFは Threat Campaign という機能を持っています。
 これは、F5のセキュリティチームで観測した、攻撃のキャンペーン(主要な攻撃の手口)の一連のふるまいから同種の攻撃であることを特定し高い精度で検知、制御する機能です。
 Attack Signatureは各通信のデータを対象とするのに対し、この機能は攻撃開始から複数の通信に渡るまでそのふるまいで判定する点が違いとなります。
 
-詳細は `Threat Campaigns <https://docs.nginx.com/nginx-app-protect/configuration-guide/configuration/#threat-campaigns>`__ をご覧ください。
+詳細は `Threat Campaigns <https://docs.nginx.com/nginx-app-protect-waf/v4/configuration-guide/configuration/#threat-campaigns>`__ をご覧ください。
 
 Threat Campaign の導入方法を紹介します。
 
