@@ -1351,15 +1351,7 @@ Attack Signatureは各通信のデータを対象とするのに対し、この�
 
 Threat Campaign の導入方法を紹介します。
 
-NGINX App Protect WAF を導入した際に、必要となる場合は Threat Campaign Signature を個別にインストールする必要があります。
-
-.. code-block:: bash
-  :linenos:
-
-   # sudo su
-   apt-get install app-protect-threat-campaigns
-
-インストールが完了した後、パッケージを確認します
+パッケージを確認します
 
 .. code-block:: bash
   :linenos:
@@ -1373,6 +1365,14 @@ NGINX App Protect WAF を導入した際に、必要となる場合は Threat Ca
    ii  app-protect-engine                 10.29.1-1~focal                       amd64        NGINX App Protect
    ii  app-protect-plugin                 3.796.0-1~focal                       amd64        NGINX App Protect plugin
    ii  app-protect-threat-campaigns       2022.03.30-1~focal                    amd64        Threat Campaign Updates for App-Protect
+
+もし、上記でapp-protect-threat-campaignsがインストールされていない場合は、Threat Campaign Signature を以下にてインストールするしてください。
+
+.. code-block:: bash
+  :linenos:
+
+   # sudo su
+   apt-get install app-protect-threat-campaigns
 
 プロセスを再起動します。
 
