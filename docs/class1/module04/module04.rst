@@ -499,7 +499,6 @@ Slow HTTP攻撃が開始した後、以下の項目が変化しています
 こちらの表示結果は、攻撃を実行して一定時間立った結果を示しています
 
 NAP DoS で保護対象となっているオブジェクト・グラフが表示されます。
-画面下部のグラフを表示する
 
    .. image:: ./media/elk-dashboard-dos-slowhttp.png
        :width: 400
@@ -673,7 +672,6 @@ HTTP Flood攻撃が開始した後、Slow HTTPと同様に以下の項目が変�
 ~~~~
 
 NAP DoS で保護対象となっているオブジェクト・グラフが表示されます。
-画面下部のグラフを表示する
 
    .. image:: ./media/elk-dashboard-dos-httpflood.png
        :width: 400
