@@ -206,7 +206,7 @@ WAFの設定を確認します
 
 WAFの設定を確認します
 
-今回確認するポリシーについて前回の内容との差分を確認します。
+今回確認するポリシーについて`2. 通信のブロック <https://f5j-nginx-plus-lab2-security.readthedocs.io/en/latest/class1/module03/module03.html#id3>`__ のポリシーの内容との差分を確認します。
 
 .. code-block:: cmdin
 
@@ -417,7 +417,7 @@ WAFのセキュリティポリシーを変更し、設定を反映します
 
 WAFの設定を確認します
 
-今回確認するポリシーについて前回の内容との差分を確認します。
+今回確認するポリシーについて`2. 通信のブロック <https://f5j-nginx-plus-lab2-security.readthedocs.io/en/latest/class1/module03/module03.html#id3>`__ のポリシーの内容との差分を確認します。
 
 .. code-block:: cmdin
 
@@ -567,7 +567,7 @@ WAFのセキュリティポリシーを変更し、設定を反映します
 
 WAFの設定を確認します
 
-今回確認するポリシーについて前回の内容との差分を確認します。
+今回確認するポリシーについて`2. 通信のブロック <https://f5j-nginx-plus-lab2-security.readthedocs.io/en/latest/class1/module03/module03.html#id3>`__ のポリシーの内容との差分を確認します。
 
 .. code-block:: cmdin
 
@@ -669,7 +669,7 @@ WAFのセキュリティポリシーを変更し、設定を反映します
 
 WAFの設定を確認します
 
-今回確認するポリシーについて前回の内容との差分を確認します。
+今回確認するポリシーについて`2. 通信のブロック <https://f5j-nginx-plus-lab2-security.readthedocs.io/en/latest/class1/module03/module03.html#id3>`__ のポリシーの内容との差分を確認します。
 
 .. code-block:: cmdin
 
@@ -792,7 +792,7 @@ Sensitive Parameterの他、NAP WAFではより詳細な制御をすることが
 
 WAFの設定を確認します
 
-今回確認するポリシーについて前回の内容との差分を確認します。
+今回確認するポリシーについて`2. 通信のブロック <https://f5j-nginx-plus-lab2-security.readthedocs.io/en/latest/class1/module03/module03.html#id3>`__ のポリシーの内容との差分を確認します。
 
 .. code-block:: cmdin
 
@@ -985,7 +985,7 @@ WAFのセキュリティポリシーを変更し、設定を反映します
 
 WAFの設定を確認します
 
-今回確認するポリシーについて前回の内容との差分を確認します。
+今回確認するポリシーについて`2. 通信のブロック <https://f5j-nginx-plus-lab2-security.readthedocs.io/en/latest/class1/module03/module03.html#id3>`__ のポリシーの内容との差分を確認します。
 
 .. code-block:: cmdin
 
@@ -1129,7 +1129,7 @@ WAFのセキュリティポリシーを変更し、設定を反映します
 
 WAFの設定を確認します
 
-今回確認するポリシーについて前回の内容との差分を確認します。
+今回確認するポリシーについて`2. 通信のブロック <https://f5j-nginx-plus-lab2-security.readthedocs.io/en/latest/class1/module03/module03.html#id3>`__ のポリシーの内容との差分を確認します。
 
 .. code-block:: cmdin
 
