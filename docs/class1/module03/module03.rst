@@ -779,8 +779,8 @@ Sensitive Parameterの他、NAP WAFではより詳細な制御をすることが
 | Parameterのセキュリティポリシーは様々なVIOLATIONが関係します。
 | 制御の内容に応じてVIOLATIONを有効にする場合がありますので、サンプルをよく確認して設定してください
 
-- 設定サンプル: `User-Defined Parameters <https://docs.nginx.com/nginx-app-protect/configuration-guide/configuration/#user-defined-parameters>`__
-- VIOLATIONの意味: `Supported Violations <https://docs.nginx.com/nginx-app-protect/configuration-guide/configuration/#supported-violations>`__
+- 設定サンプル: `User-Defined Parameters <https://docs.nginx.com/nginx-app-protect-waf/v4/configuration-guide/configuration/#user-defined-parameters>`__
+- VIOLATIONの意味: `Supported Violations <https://docs.nginx.com/nginx-app-protect-waf/v4/configuration-guide/configuration/#supported-violations>`__
 
 .. code-block:: cmdin
 
